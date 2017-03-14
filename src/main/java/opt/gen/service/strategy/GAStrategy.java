@@ -13,8 +13,7 @@ public interface GAStrategy<OPTIMIZATION_TYPE, GROUPING_TYPE> {
 
 	GAStrategyInfo getInfo();
 
-	List<GACandidate<Long>> initialization(Set<OPTIMIZATION_TYPE> geneDictionary, Map<GROUPING_TYPE, List<OPTIMIZATION_TYPE>> realPopulation,
-										   int geneSequenceMinSize, int geneSequenceMaxSize);
+	List<GACandidate<Long>> initialization(Set<OPTIMIZATION_TYPE> geneDictionary, Map<GROUPING_TYPE, List<OPTIMIZATION_TYPE>> realPopulation);
 
 	List<GACandidate<OPTIMIZATION_TYPE>> crossover(List<GACandidate<OPTIMIZATION_TYPE>> initialGeneration);
 

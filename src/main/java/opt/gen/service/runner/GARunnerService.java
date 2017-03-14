@@ -10,6 +10,6 @@ import opt.gen.error.GAException;
 
 public interface GARunnerService<OPTIMIZATION_TYPE, GROUPING_TYPE> {
 
-	Map<String, GASolution<Long, String>> run(Set<OPTIMIZATION_TYPE> geneDictionary, Map<GROUPING_TYPE, List<OPTIMIZATION_TYPE>> realPopulation, int chromosomeMinSize, int chromosomeMaxSize)
-			throws GAException;
+	Map<String, GASolution<Long, String>> run(Set<OPTIMIZATION_TYPE> geneDictionary, Map<GROUPING_TYPE, List<OPTIMIZATION_TYPE>> realPopulation);
+
 }

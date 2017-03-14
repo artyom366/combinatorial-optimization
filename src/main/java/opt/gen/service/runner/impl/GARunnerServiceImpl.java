@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import opt.gen.domain.GACandidate;
 import opt.gen.domain.GASolution;
 import opt.gen.domain.impl.Result;
-import opt.gen.error.GAException;
 import opt.gen.service.runner.GARunnerService;
 import opt.gen.service.strategy.GAStrategy;
 
@@ -26,13 +25,12 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 	}
 
 	@Override
-	public Map<String, GASolution<Long, String>> run(final Set<Long> geneDictionary, final Map<String, List<Long>> realPopulation, final int chromosomeMinSize, final int chromosomeMaxSize)
-			throws GAException {
+	public Map<String, GASolution<Long, String>> run(final Set<Long> geneDictionary, final Map<String, List<Long>> realPopulation) {
 
 		Validate.notEmpty(realPopulation, "GA real population is not defined");
 
-		final List<GACandidate<Long>> initialPopulation = Validate
-			.notEmpty(strategy.initialization(geneDictionary, realPopulation, chromosomeMinSize, chromosomeMaxSize), "Initial population is not defined");
+		final List<GACandidate<Long>> initialPopulation =
+			Validate.notEmpty(strategy.initialization(geneDictionary, realPopulation), "Initial population is not defined");
 
 		final Map<String, GASolution<Long, String>> result = new HashMap<>();
 		run(realPopulation, initialPopulation, geneDictionary, result, result.size());
@@ -41,12 +39,13 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 	}
 
 	private void run(final Map<String, List<Long>> realPopulation, final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary,
-			final Map<String, GASolution<Long, String>> result, final int diversityDifference) throws GAException {
+			final Map<String, GASolution<Long, String>> result, final int diversityDifference) {
 
-		//final ForkJoinPool forkJoinPool = new ForkJoinPool(strategy.getParallelismLevel());
-		//forkJoinPool.submit(() -> {
-			estimateFitnessFrequency(realPopulation, initialGeneration, result);
-		//});
+		// final ForkJoinPool forkJoinPool = new
+		// ForkJoinPool(strategy.getParallelismLevel());
+		// forkJoinPool.submit(() -> {
+		estimateFitnessFrequency(realPopulation, initialGeneration, result);
+		// });
 
 		if (convergenceIsNotReached(result.size(), diversityDifference)) {
 			run(realPopulation, getNextGeneration(initialGeneration, geneDictionary), geneDictionary, result, result.size());
@@ -75,7 +74,6 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		return strategy.getInfo().getConvergenceRetryThreshold() >= strategy.getStatistics().getCurrentConvergenceRetriesCount();
 	}
 
-
 	private void estimateFitnessFrequency(final Map<String, List<Long>> realPopulation, final List<GACandidate<Long>> nextGeneration,
 			final Map<String, GASolution<Long, String>> result) {
 
@@ -98,7 +96,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		return realGeneSequence.containsAll(individualGeneSequence);
 	}
 
-	private List<GACandidate<Long>> getNextGeneration(final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary) throws GAException {
+	private List<GACandidate<Long>> getNextGeneration(final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary) {
 
 		final List<GACandidate<Long>> nextGeneration = strategy.crossover(initialGeneration);
 		Validate.notEmpty(nextGeneration, "Next generation is not defined");

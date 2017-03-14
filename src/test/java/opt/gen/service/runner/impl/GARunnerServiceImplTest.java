@@ -43,7 +43,7 @@ public class GARunnerServiceImplTest {
 		final Set<Long> dictionary = generateGeneDictionary(realData);
 		final Map<String, List<Long>> realDataGroups = getRealDataAsMap(realData);
 
-		final Map<String, GASolution<Long, String>> result = gaRunnerService.run(dictionary, realDataGroups, 2, 4);
+		final Map<String, GASolution<Long, String>> result = gaRunnerService.run(dictionary, realDataGroups);
 		assertThat("", result, is(notNullValue()));
 	}
 
