@@ -1,12 +1,26 @@
 package opt.gen;
 
-import org.springframework.boot.SpringApplication;
+import javafx.stage.Stage;
+import opt.gen.ui.controller.MainController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+
 
 @EnableAutoConfiguration
-public class Application {
+@ComponentScan("opt.gen")
+public class Application extends AbstractJavaFxApplicationSupport {
+
+	@Autowired
+	private MainController mainController;
 
 	public static void main(final String[] args) {
-		SpringApplication.run(Application.class, args);
+		launchApp(Application.class, args);
+	}
+
+	@Override
+	public void start(final Stage primaryStage) throws Exception {
+		primaryStage.setScene(mainController.buildMainScene());
+		primaryStage.show();
 	}
 }
