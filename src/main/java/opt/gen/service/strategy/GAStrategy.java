@@ -22,5 +22,5 @@ public interface GAStrategy<OPTIMIZATION_TYPE, GROUPING_TYPE> {
 	List<GACandidate<OPTIMIZATION_TYPE>> mutation(List<GACandidate<OPTIMIZATION_TYPE>> refinedGeneration, Set<OPTIMIZATION_TYPE> geneDictionary);
 
 	List<GACandidate<OPTIMIZATION_TYPE>> correction(List<GACandidate<OPTIMIZATION_TYPE>> mutatedGeneration,
-			List<GACandidate<OPTIMIZATION_TYPE>> initialGeneration);
+			List<GACandidate<OPTIMIZATION_TYPE>> initialGeneration, Set<OPTIMIZATION_TYPE> geneDictionary);
 }

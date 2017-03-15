@@ -44,7 +44,7 @@ public class GARunnerServiceImplTest {
 		final Map<String, List<Long>> realDataGroups = getRealDataAsMap(realData);
 
 		final Map<String, GASolution<Long, String>> result = gaRunnerService.run(dictionary, realDataGroups);
-		assertThat("", result, is(notNullValue()));
+		assertThat("GA result should not be null", result, is(notNullValue()));
 	}
 
 

@@ -13,8 +13,8 @@ public final class Chromosome implements GACandidate<Long> {
 	private final Set<Long> genes;
 
 	public Chromosome(final Set<Long> genes, final String hash) {
-		Validate.notEmpty(genes, "Candidate gene sequence is not defined");
-		Validate.notEmpty(hash, "Candidate hash is bot defined");
+		Validate.notNull(genes, "Candidate gene sequence is not defined");
+		Validate.notNull(hash, "Candidate hash is bot defined");
 
 		this.genes = genes;
 		this.hash = hash;

@@ -107,7 +107,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		final List<GACandidate<Long>> mutatedGeneration = strategy.mutation(refinedGeneration, geneDictionary);
 		Validate.notEmpty(mutatedGeneration, "Mutated generation is not defined");
 
-		final List<GACandidate<Long>> correctedGeneration = strategy.correction(mutatedGeneration, initialGeneration);
+		final List<GACandidate<Long>> correctedGeneration = strategy.correction(mutatedGeneration, initialGeneration, geneDictionary);
 		Validate.notEmpty(correctedGeneration, "Corrected generation is not defined");
 
 		return correctedGeneration;

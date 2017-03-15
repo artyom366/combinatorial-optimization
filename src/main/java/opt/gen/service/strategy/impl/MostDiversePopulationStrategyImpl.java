@@ -17,13 +17,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableSet;
 import opt.gen.domain.GACandidate;
 import opt.gen.domain.GAStatistics;
 import opt.gen.domain.impl.Chromosome;
@@ -81,29 +84,29 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 
 	protected List<GACandidate<Long>> createRandomPopulation(final long populationSize, final Set<Long> geneDictionary) {
 
-        final List<Long> geneSamples = new ArrayList<>(geneDictionary);
-        final List<GACandidate<Long>> chromosomes = new ArrayList<>();
+		final List<Long> geneSamples = new ArrayList<>(geneDictionary);
+		final List<GACandidate<Long>> chromosomes = new ArrayList<>();
 
-        LongStream.range(0, populationSize).forEach(chromosome -> {
-            final Set<Long> genes = getGenes(geneSamples);
-            chromosomes.add(new Chromosome(genes, gaService.generateHash(genes)));
-        });
+		LongStream.range(0, populationSize).forEach(chromosome -> {
+			final Set<Long> genes = getGenes(geneSamples);
+			chromosomes.add(new Chromosome(genes, gaService.generateHash(genes)));
+		});
 
-        return Collections.unmodifiableList(chromosomes);
-    }
+		return Collections.unmodifiableList(chromosomes);
+	}
 
-    private Set<Long> getGenes(final List<Long> geneSamples) {
-        final Set<Long> genes = new HashSet<>();
-        final long chromosomeSize = RandomGenerator.generateUniformLongInclusive(MIN_CHROMOSOME_SIZE, MAX_CHROMOSOME_SIZE);
+	private Set<Long> getGenes(final List<Long> geneSamples) {
+		final Set<Long> genes = new HashSet<>();
+		final long chromosomeSize = RandomGenerator.generateUniformLongInclusive(MIN_CHROMOSOME_SIZE, MAX_CHROMOSOME_SIZE);
 
-        while (genes.size() < chromosomeSize) {
-            final int sampleIndex = RandomGenerator.generateUniformInt(geneSamples.size());
-            genes.add(geneSamples.get(sampleIndex));
-        }
+		while (genes.size() < chromosomeSize) {
+			final int sampleIndex = RandomGenerator.generateUniformInt(geneSamples.size());
+			genes.add(geneSamples.get(sampleIndex));
+		}
 
-        assert genes.size() >= MIN_CHROMOSOME_SIZE && genes.size() <= MAX_CHROMOSOME_SIZE;
-        return Collections.unmodifiableSet(genes);
-    }
+		assert genes.size() >= MIN_CHROMOSOME_SIZE && genes.size() <= MAX_CHROMOSOME_SIZE;
+		return Collections.unmodifiableSet(genes);
+	}
 
 	@Override
 	public List<GACandidate<Long>> crossover(final List<GACandidate<Long>> parentGeneration) {
@@ -115,8 +118,8 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	private List<Pair<GACandidate<Long>, GACandidate<Long>>> getParents(final List<GACandidate<Long>> parentGeneration) {
-		return IntStream.range(1, parentGeneration.size()).filter(this::isOddIndex)
-			.mapToObj(i -> new ImmutablePair<>(parentGeneration.get(i - 1), parentGeneration.get(i))).collect(Collectors.toList());
+		return IntStream.range(1, parentGeneration.size()).filter(this::isOddIndex).mapToObj(
+				i -> new ImmutablePair<>(parentGeneration.get(i - 1), parentGeneration.get(i))).collect(Collectors.toList());
 	}
 
 	private boolean isOddIndex(final int index) {
@@ -135,25 +138,28 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 			final int leftSize = leftGeneSequence.size();
 			final int rightSize = rightGeneSequence.size();
 
-			assert leftSize > 1 || rightSize > 1;
+			if (!(leftSize > 1 || rightSize > 1)) {
+				int i = 0;
+			}
 
 			final int crossoverLine = getGeneSequenceCrossoverIndex(leftSize, rightSize);
 
 			final Pair<List<Long>, List<Long>> leftHeadAndTail = splitGenesToHeadAndTail(leftGeneSequence, crossoverLine);
 			final Pair<List<Long>, List<Long>> rightHeadAndTail = splitGenesToHeadAndTail(rightGeneSequence, crossoverLine);
 
-			final Pair<GACandidate<Long>, GACandidate<Long>> children =
-				genesSwap(leftHeadAndTail.getLeft(), leftHeadAndTail.getRight(), rightHeadAndTail.getLeft(), rightHeadAndTail.getRight());
+			final Pair<GACandidate<Long>, GACandidate<Long>> children = genesSwap(leftHeadAndTail.getLeft(), leftHeadAndTail.getRight(),
+																				  rightHeadAndTail.getLeft(), rightHeadAndTail.getRight());
 
+			if (!children.getLeft().getGeneSequence().isEmpty()) {
+				nextGeneration.add(children.getLeft());
+			}
 
-			assert children.getLeft().getGeneSequence().size()> 1 || children.getRight().getGeneSequence().size() > 1;
-
-			nextGeneration.add(children.getLeft());
-			nextGeneration.add(children.getRight());
+			if (!children.getRight().getGeneSequence().isEmpty()) {
+				nextGeneration.add(children.getRight());
+			}
 		});
 
 		return nextGeneration;
-
 	}
 
 	private List<Long> getParentGenesSequenceAsList(final GACandidate<Long> parent) {
@@ -166,8 +172,6 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	private Pair<List<Long>, List<Long>> splitGenesToHeadAndTail(final List<Long> geneSequence, final int splitIndex) {
-        assert geneSequence.size() > 1 && splitIndex > 0;
-
 		final List<Long> head = IntStream.range(0, splitIndex).mapToObj(geneSequence::get).collect(Collectors.toList());
 		final List<Long> tail = IntStream.range(splitIndex, geneSequence.size()).mapToObj(geneSequence::get).collect(Collectors.toList());
 
@@ -175,18 +179,21 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	private Pair<GACandidate<Long>, GACandidate<Long>> genesSwap(final List<Long> leftHead, final List<Long> leftTail, final List<Long> rightHead,
-			final List<Long> rightTail) {
-
-		leftHead.addAll(rightTail);
-		rightHead.addAll(leftTail);
-
-		final Set<Long> leftGenes = new HashSet<>(leftHead);
-		final Set<Long> rightGenes = new HashSet<>(rightHead);
-
-		final GACandidate<Long> leftChild = new Chromosome(leftGenes, gaService.generateHash(leftGenes));
-		final GACandidate<Long> rightChild = new Chromosome(rightGenes, gaService.generateHash(rightGenes));
-
+																 final List<Long> rightTail) {
+		final GACandidate<Long> leftChild = getChildGeneSequence(leftHead, rightTail);
+		final GACandidate<Long> rightChild = getChildGeneSequence(rightHead, leftTail);
 		return new ImmutablePair<>(leftChild, rightChild);
+	}
+
+	private GACandidate<Long> getChildGeneSequence(final List<Long> head, final List<Long> tail) {
+
+		if (Collections.disjoint(head, tail)) {
+			final ImmutableSet<Long> geneSequence = Stream.concat(head.stream(), tail.stream()).map(Long::valueOf).collect(
+					Collectors.collectingAndThen(Collectors.toSet(), ImmutableSet::copyOf));
+			return new Chromosome(geneSequence, gaService.generateHash(geneSequence));
+		}
+
+		return new Chromosome(Collections.EMPTY_SET, StringUtils.EMPTY);
 	}
 
 	@Override
@@ -289,8 +296,18 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	@Override
-	public List<GACandidate<Long>> correction(final List<GACandidate<Long>> mutatedGeneration, final List<GACandidate<Long>> initialGeneration) {
+	public List<GACandidate<Long>> correction(final List<GACandidate<Long>> mutatedGeneration, final List<GACandidate<Long>> initialGeneration,
+											  final Set<Long> geneDictionary) {
+
 		Validate.notEmpty(mutatedGeneration, "Mutated generation is not defined");
-		return mutatedGeneration;
+		Validate.notEmpty(initialGeneration, "Initial generation is not defined");
+		Validate.notEmpty(geneDictionary, "Gene dictionary is not defined");
+
+		final int targetPopulationSize = initialGeneration.size();
+		final int currentPopulationSize = mutatedGeneration.size();
+		final int populationShortage = targetPopulationSize - currentPopulationSize;
+		final List<GACandidate<Long>> missingCandidates = createRandomPopulation(populationShortage, geneDictionary);
+
+		return Collections.unmodifiableList(Stream.concat(missingCandidates.stream(), mutatedGeneration.stream()).collect(Collectors.toList()));
 	}
 }
