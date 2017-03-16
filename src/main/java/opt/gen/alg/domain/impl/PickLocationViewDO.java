@@ -72,7 +72,7 @@ public final class PickLocationViewDO implements Serializable, GADataEntry<Long,
 	@Column(name = "REFILLEVENT")
 	private Integer refillEvent;
 
-	@Column(name = "QNATITYBASE")
+	@Column(name = "QUANTITYBASE")
 	private BigDecimal quantityBase;
 
 	@Column(name = "PSLIPTYPEID")
