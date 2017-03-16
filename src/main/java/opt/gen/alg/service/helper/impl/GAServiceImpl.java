@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import opt.gen.alg.domain.GASolution;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import com.google.common.collect.ImmutableSet;
 import opt.gen.alg.domain.GADataEntry;
 import opt.gen.alg.service.helper.GAService;
 
-@Service("gaServiceImpl")
+@Service("gaService")
 public class GAServiceImpl implements GAService<Long, String> {
 
 	@Override
@@ -39,6 +40,12 @@ public class GAServiceImpl implements GAService<Long, String> {
 		return gaRealData.stream()
 			.collect(Collectors.groupingBy(GADataEntry::getGroupingParameter, Collectors.mapping(GADataEntry::getOptimizationParameter, Collectors.toList())));
 
+	}
+
+	@Override
+	public List<GASolution<Long, String>> getResultAsList(final Map<String, GASolution<Long, String>> result) {
+		Validate.notEmpty(result, "Result map is not defined");
+		return result.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
 	}
 
 	@Override

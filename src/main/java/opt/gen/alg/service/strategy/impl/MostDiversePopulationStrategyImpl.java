@@ -1,53 +1,5 @@
 package opt.gen.alg.service.strategy.impl;
 
-import opt.gen.alg.domain.GACandidate;
-import opt.gen.alg.domain.GAStatistics;
-import opt.gen.alg.domain.impl.Chromosome;
-import opt.gen.alg.domain.impl.Statistics;
-import opt.gen.alg.error.IllegalChromosomeSizeException;
-import opt.gen.alg.generator.RandomGenerator;
-import opt.gen.alg.service.helper.GAService;
-import opt.gen.alg.service.strategy.GAStrategy;
-import opt.gen.alg.service.strategy.GAStrategyInfo;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-
-import static opt.gen.alg.generator.RandomGenerator.*;
-import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.*;
-import static opt.gen.alg.generator.RandomGenerator.generateUniformDouble;
-import static opt.gen.alg.generator.RandomGenerator.generateUniformInt;
-import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.CROSSOVER_INDEX_LOWER_BOUND;
-import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.MAX_CHROMOSOME_SIZE;
-import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.MIN_CHROMOSOME_SIZE;
-import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.POPULATION_PERCENTILE_SIZE;
-import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.PROBABILITY_OF_MUTATION;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.common.collect.ImmutableSet;
 import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GAStatistics;
@@ -58,6 +10,22 @@ import opt.gen.alg.generator.RandomGenerator;
 import opt.gen.alg.service.helper.GAService;
 import opt.gen.alg.service.strategy.GAStrategy;
 import opt.gen.alg.service.strategy.GAStrategyInfo;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
+
+import static opt.gen.alg.generator.RandomGenerator.generateUniformDouble;
+import static opt.gen.alg.generator.RandomGenerator.generateUniformInt;
+import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.*;
 
 @Service("mostDiversePopulationStrategy")
 public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, String> {
