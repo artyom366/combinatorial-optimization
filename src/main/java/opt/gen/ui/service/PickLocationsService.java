@@ -1,10 +1,8 @@
 package opt.gen.ui.service;
 
-import java.util.List;
-
-import opt.gen.alg.domain.GADataEntry;
+import opt.gen.alg.domain.impl.PickLocationViewDO;
 
 public interface PickLocationsService {
 
-	List<GADataEntry<Long, String>> getPickLocations();
+	Iterable<PickLocationViewDO> findAll();
 }
