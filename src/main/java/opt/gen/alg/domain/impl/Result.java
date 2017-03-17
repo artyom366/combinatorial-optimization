@@ -36,15 +36,23 @@ public final class Result implements GASolution<Long, String> {
 		return realDataSequenceIds.size();
 	}
 
+	@Override
 	public String getHash() {
 		return candidate.getHash();
 	}
 
+	@Override
 	public String getLocations() {
 		return realDataSequenceIds.stream().collect(Collectors.joining("-"));
 	}
 
-	public int getCount() {
+	@Override
+	public int getGenesCount() {
 		return candidate.getGeneSequence().size();
+	}
+
+	@Override
+	public int getLocationsCount() {
+		return realDataSequenceIds.size();
 	}
 }

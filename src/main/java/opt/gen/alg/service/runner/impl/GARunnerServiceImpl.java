@@ -48,6 +48,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		// });
 
 		strategy.getStatistics().addConvergenceValue(result.size() - diversityDifference);
+		strategy.getStatistics().addCombinationTotalValue(result.size());
 
 		if (convergenceIsNotReached(result.size(), diversityDifference)) {
 			run(realPopulation, getNextGeneration(initialGeneration, geneDictionary), geneDictionary, result, result.size());

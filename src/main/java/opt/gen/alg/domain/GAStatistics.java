@@ -10,5 +10,21 @@ public interface GAStatistics {
 
 	void addConvergenceValue(int value);
 
-	List<Integer> getConvergence();
+	void addCombinationTotalValue(int value);
+
+	List<Integer> getConvergences();
+
+	List<Integer> getCombinations();
+
+	void incrementCurrentIteration();
+
+	void setNewCombinationsInfo(int newCombinations);
+
+	void addToMutatedCountInfo();
+
+	void setCorrectedCount(int correctedCount);
+
+	void setCurrentRetriesCount(int retriesCount);
+
+	void setTotalCount(int totalCount);
 }

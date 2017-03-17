@@ -9,4 +9,12 @@ public interface GASolution<OPTIMIZATION_TYPE, REAL_DATA_SEQUENCE_ID_TYPE> {
 	List<REAL_DATA_SEQUENCE_ID_TYPE> getRealDataSequenceIds();
 
 	int getCandidateFrequency();
+
+	String getHash();
+
+	String getLocations();
+
+	int getGenesCount();
+
+	int getLocationsCount();
 }
