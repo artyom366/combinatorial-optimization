@@ -26,8 +26,9 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 
 	@Override
 	public Map<String, GASolution<Long, String>> run(final Set<Long> geneDictionary, final Map<String, List<Long>> realPopulation) {
-
 		Validate.notEmpty(realPopulation, "GA real population is not defined");
+
+		strategy.init();
 
 		final List<GACandidate<Long>> initialPopulation =
 			Validate.notEmpty(strategy.initialization(geneDictionary, realPopulation), "Initial population is not defined");
@@ -46,6 +47,12 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		// forkJoinPool.submit(() -> {
 		estimateFitnessFrequency(realPopulation, initialGeneration, result);
 		// });
+
+		strategy.getStatistics().incrementCurrentIteration();
+		strategy.getStatistics().setNewCombinationsCount(result.size() - diversityDifference);
+		strategy.getStatistics().setCurrentRetriesCount(strategy.getStatistics().getCurrentConvergenceRetriesCount());
+		strategy.getStatistics().setTotalCount(result.size());
+		strategy.getStatistics().setTotalNonUniqueCount(result);
 
 		strategy.getStatistics().addConvergenceValue(result.size() - diversityDifference);
 		strategy.getStatistics().addCombinationTotalValue(result.size());

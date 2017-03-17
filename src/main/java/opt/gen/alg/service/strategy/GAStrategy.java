@@ -9,7 +9,9 @@ import opt.gen.alg.domain.GAStatistics;
 
 public interface GAStrategy<OPTIMIZATION_TYPE, GROUPING_TYPE> {
 
-	GAStatistics getStatistics();
+    void init();
+
+    GAStatistics getStatistics();
 
 	GAStrategyInfo getInfo();
 

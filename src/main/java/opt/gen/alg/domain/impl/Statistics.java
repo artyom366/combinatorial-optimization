@@ -5,6 +5,7 @@ import opt.gen.alg.domain.GAStatistics;
 import org.apache.commons.lang3.Validate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class Statistics implements GAStatistics {
 
@@ -14,9 +15,6 @@ public final class Statistics implements GAStatistics {
 	private final List<Integer> combinations;
 
 	private int currentIteration;
-	private int mutatedCount;
-
-
 	private final Map<Integer, Info> info;
 
 	public Statistics() {
@@ -65,12 +63,12 @@ public final class Statistics implements GAStatistics {
 	}
 
 	@Override
-	public void setNewCombinationsInfo(final int newCombinations) {
+	public void setNewCombinationsCount(final int newCombinations) {
 		getCurrentIterationInfo().setNewCombinationsCount(newCombinations);
 	}
 
 	@Override
-	public void addToMutatedCountInfo() {
+	public void addToMutatedCount() {
 		getCurrentIterationInfo().addToMutatedCount();
 	}
 
@@ -90,13 +88,17 @@ public final class Statistics implements GAStatistics {
 	}
 
 	@Override
-	public void setTotalNonUniqueCount(final GASolution<Long, String> result) {
-		result.
+	public void setTotalNonUniqueCount(final Map<String, GASolution<Long, String>> result) {
+		final long count = result.entrySet().stream().filter(value -> value.getValue().getRealDataSequenceIds().size() > 1).count();
+		getCurrentIterationInfo().setTotalNonUniqueCount((int) count);
 	}
 
 	private Info getCurrentIterationInfo() {
-		return Validate.notNull(this.info.get(this.currentIteration), "Info is nor defined with key: %d", this.currentIteration);
+		return Validate.notNull(this.info.get(this.currentIteration), "Info is not defined with key: %d", this.currentIteration);
 	}
 
-
+	@Override
+	public List<Info> getRunnerInfo() {
+		return this.info.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
+	}
 }

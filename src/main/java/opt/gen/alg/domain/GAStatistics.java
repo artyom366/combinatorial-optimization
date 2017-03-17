@@ -1,6 +1,9 @@
 package opt.gen.alg.domain;
 
+import opt.gen.alg.domain.impl.Info;
+
 import java.util.List;
+import java.util.Map;
 
 public interface GAStatistics {
 
@@ -18,13 +21,17 @@ public interface GAStatistics {
 
 	void incrementCurrentIteration();
 
-	void setNewCombinationsInfo(int newCombinations);
+	void setNewCombinationsCount(int newCombinations);
 
-	void addToMutatedCountInfo();
+	void addToMutatedCount();
 
 	void setCorrectedCount(int correctedCount);
 
 	void setCurrentRetriesCount(int retriesCount);
 
 	void setTotalCount(int totalCount);
+
+    void setTotalNonUniqueCount(Map<String, GASolution<Long, String>> result);
+
+	List<Info> getRunnerInfo();
 }

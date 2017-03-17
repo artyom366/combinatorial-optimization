@@ -3,6 +3,7 @@ package opt.gen.ui.controller.impl;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import opt.gen.alg.domain.GAStatistics;
+import opt.gen.alg.domain.impl.Info;
 import opt.gen.ui.component.TableColumnFactory;
 import opt.gen.ui.controller.InfoTableController;
 import org.springframework.stereotype.Service;
@@ -29,21 +30,21 @@ public class InfoTableControllerImpl implements InfoTableController {
     private final static String TOTAL_NON_UNIQUE_COUNT = "TOTAL_U_C";
 
     @Override
-    public TableView<GAStatistics> getInfoTable() {
+    public TableView<Info> getInfoTable() {
 
-        final TableView<GAStatistics> tableView = new TableView<>();
+        final TableView<Info> tableView = new TableView<>();
         tableView.setLayoutX(LAYOUT_X);
         tableView.setLayoutY(LAYOUT_Y);
         tableView.setPrefWidth(WIDTH);
         tableView.setPrefHeight(HEIGHT);
 
-        final TableColumn iteration = TableColumnFactory.<GAStatistics, String>getColumn(ITERATION, "iteration", COLUMN_WIDTH_NORMAL);
-        final TableColumn newCombinations = TableColumnFactory.<GAStatistics, String>getColumn(NEW_COMBINATIONS, "newCombinationsCount", COLUMN_WIDTH_NORMAL);
-        final TableColumn mutatedCount = TableColumnFactory.<GAStatistics, String>getColumn(MUTATED_COUNT, "mutatedCount", COLUMN_WIDTH_NORMAL);
-        final TableColumn correctedCount = TableColumnFactory.<GAStatistics, String>getColumn(CORRECTED_COUNT, "correctedCount", COLUMN_WIDTH_NORMAL);
-        final TableColumn retriesCount = TableColumnFactory.<GAStatistics, String>getColumn(RETRIES_COUNT, "retriesCount", COLUMN_WIDTH_NORMAL);
-        final TableColumn totalLocationsCount = TableColumnFactory.<GAStatistics, String>getColumn(TOTAL_LOCATIONS_COUNT, "totalCount", COLUMN_WIDTH_NORMAL);
-        final TableColumn totalNonUniqueCount = TableColumnFactory.<GAStatistics, String>getColumn(TOTAL_NON_UNIQUE_COUNT, "totalNonUniqueCount", COLUMN_WIDTH_NORMAL);
+        final TableColumn iteration = TableColumnFactory.<Info, String>getColumn(ITERATION, "iteration", COLUMN_WIDTH_NORMAL);
+        final TableColumn newCombinations = TableColumnFactory.<Info, String>getColumn(NEW_COMBINATIONS, "newCombinationsCount", COLUMN_WIDTH_NORMAL);
+        final TableColumn mutatedCount = TableColumnFactory.<Info, String>getColumn(MUTATED_COUNT, "mutatedCount", COLUMN_WIDTH_NORMAL);
+        final TableColumn correctedCount = TableColumnFactory.<Info, String>getColumn(CORRECTED_COUNT, "correctedCount", COLUMN_WIDTH_NORMAL);
+        final TableColumn retriesCount = TableColumnFactory.<Info, String>getColumn(RETRIES_COUNT, "retriesCount", COLUMN_WIDTH_NORMAL);
+        final TableColumn totalLocationsCount = TableColumnFactory.<Info, String>getColumn(TOTAL_LOCATIONS_COUNT, "totalCount", COLUMN_WIDTH_NORMAL);
+        final TableColumn totalNonUniqueCount = TableColumnFactory.<Info, String>getColumn(TOTAL_NON_UNIQUE_COUNT, "totalNonUniqueCount", COLUMN_WIDTH_NORMAL);
         tableView.getColumns().addAll(iteration, newCombinations, mutatedCount, correctedCount, retriesCount, totalLocationsCount, totalNonUniqueCount);
 
         return tableView;

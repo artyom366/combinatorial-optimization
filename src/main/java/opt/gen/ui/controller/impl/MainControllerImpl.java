@@ -5,21 +5,23 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import opt.gen.alg.domain.GADataEntry;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.domain.GAStatistics;
+import opt.gen.alg.domain.impl.Info;
 import opt.gen.alg.service.helper.GAService;
 import opt.gen.alg.service.runner.GARunnerService;
 import opt.gen.alg.service.runner.impl.GARunnerServiceImpl;
 import opt.gen.alg.service.strategy.GAStrategy;
+import opt.gen.ui.component.ButtonFactory;
 import opt.gen.ui.controller.ChartController;
 import opt.gen.ui.controller.InfoTableController;
 import opt.gen.ui.controller.MainController;
 import opt.gen.ui.controller.ResultTableController;
 import opt.gen.ui.service.PickLocationsService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +37,9 @@ public class MainControllerImpl implements MainController {
     private final static float HEIGHT = 800f;
 
     private final static String CONVERGENCE_SERIES_NAME = "Newly discovered combinations";
-    private final static String COMBINATION_SERIES_NAME = "Total combinations";
+    private final static String START_BUTTON_CAPTION = "Start";
+    private final static String CLEAR_BUTTON_CAPTION = "Clear";
+
 
     @Autowired
     private GAStrategy<Long, String> mostDiversePopulationStrategy;
@@ -58,18 +62,32 @@ public class MainControllerImpl implements MainController {
     @Override
     public Scene buildMainScene() {
 
-        final List<GASolution<Long, String>> result = getResult();
-        final GAStatistics statistics = mostDiversePopulationStrategy.getStatistics();
+        final LineChart<Number, Number> lineChart = getLineChart();
+        final TableView<Info> infoTable = getInfoTable();
+        final TableView<GASolution<Long, String>> resultTable = getResultTable();
 
-        final LineChart<Number, Number> lineChart = getLineChartWithData(statistics);
-        final TableView<GAStatistics> infoTable = getInfoTableWithData(statistics);
-        final TableView<GASolution<Long, String>> resultTable = getResultTableWithData(result);
+        final Button startButton = ButtonFactory.getButton(35, 10, 30, 75, START_BUTTON_CAPTION);
+        startButton.setOnAction(event -> {
+
+            final List<GASolution<Long, String>> result = getResult();
+            final GAStatistics statistics = mostDiversePopulationStrategy.getStatistics();
+
+            addDataToChart(lineChart, statistics);
+            addDataToResultTable(resultTable, result);
+            addDataToInfoTable(infoTable, statistics);
+        });
+
+        final Button clearButton = ButtonFactory.getButton(120, 10, 30, 75, CLEAR_BUTTON_CAPTION);
+        clearButton.setOnAction(event -> {
+            clearLineChart(lineChart);
+            clearTableView(resultTable);
+            clearTableView(infoTable);
+        });
 
         final Pane root = new Pane();
-        root.getChildren().addAll(lineChart, infoTable, resultTable);
+        root.getChildren().addAll(startButton, clearButton, lineChart, infoTable, resultTable);
 
-        final Scene scene = new Scene(root, WIDTH, HEIGHT);
-        return scene;
+        return new Scene(root, WIDTH, HEIGHT);
     }
 
     private List<GASolution<Long, String>> getResult() {
@@ -84,28 +102,47 @@ public class MainControllerImpl implements MainController {
         return gaService.getResultAsList(result);
     }
 
-    private TableView<GASolution<Long, String>> getResultTableWithData(final List<GASolution<Long, String>> result) {
-        final TableView<GASolution<Long, String>> resultTable = resultTableController.getResultTable();
-        final ObservableList<GASolution<Long, String>> tableData = FXCollections.observableList(result);
-        resultTable.setItems(tableData);
-        return resultTable;
+    private TableView<GASolution<Long, String>> getResultTable() {
+        return (TableView<GASolution<Long, String>>) resultTableController.getResultTable();
     }
 
-    private TableView<GAStatistics> getInfoTableWithData(final GAStatistics statistics) {
-        final TableView<GAStatistics> infoTable = infoTableController.getInfoTable();
-
-        return infoTable;
+    private TableView<Info> getInfoTable() {
+        return infoTableController.getInfoTable();
     }
 
-    private LineChart<Number, Number> getLineChartWithData(final GAStatistics statistics) {
-        final LineChart<Number, Number> lineChart = chartController.getXYChart();
+    private LineChart<Number, Number> getLineChart() {
+        return chartController.getXYChart();
+    }
+
+    private void addDataToChart(final LineChart<Number, Number> lineChart, final GAStatistics statistics) {
         final XYChart.Series<Number, Number> convergence = new XYChart.Series<>();
         convergence.setName(CONVERGENCE_SERIES_NAME);
 
         IntStream.range(0, statistics.getConvergences().size())
                 .forEach(index -> convergence.getData().add(new XYChart.Data<>(index, statistics.getConvergences().get(index))));
 
+        clearLineChart(lineChart);
         lineChart.getData().add(convergence);
-        return lineChart;
+    }
+
+    private void addDataToResultTable(final TableView<GASolution<Long, String>> resultTable, final List<GASolution<Long, String>> result) {
+        final ObservableList<GASolution<Long, String>> tableData = FXCollections.observableList(result);
+        clearTableView(resultTable);
+        resultTable.setItems(tableData);
+    }
+
+    private void addDataToInfoTable(final TableView<Info> infoTable, final GAStatistics statistics) {
+        final List<Info> result = statistics.getRunnerInfo();
+        final ObservableList<Info> tableData = FXCollections.observableList(result);
+        clearTableView(infoTable);
+        infoTable.setItems(tableData);
+    }
+
+    private void clearLineChart(final LineChart<Number, Number> lineChart) {
+        lineChart.getData().clear();
+    }
+
+    private void clearTableView(final TableView tableView) {
+        tableView.getItems().clear();
     }
 }

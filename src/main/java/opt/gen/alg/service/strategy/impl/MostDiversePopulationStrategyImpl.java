@@ -34,11 +34,15 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	private GAService<Long, String> gaService;
 
 	private GAStatistics statistics;
-	private GAStrategyInfo info;
+	private final GAStrategyInfo info;
 
 	public MostDiversePopulationStrategyImpl() {
-		statistics = new Statistics();
 		info = new MostDiversePopulationStrategyInfo();
+	}
+
+	@Override
+	public void init() {
+		statistics = new Statistics();
 	}
 
 	@Override
@@ -217,6 +221,9 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	private GACandidate<Long> mutate(final GACandidate<Long> candidate, final List<Long> geneSamples) {
+
+		getStatistics().addToMutatedCount();
+
 		final List<Long> genes = Collections.unmodifiableList(new ArrayList<>(candidate.getGeneSequence()));
 		return getNewCandidate(addOrRemoveRandomGene(genes, geneSamples));
 	}
@@ -295,6 +302,8 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 		final int currentPopulationSize = mutatedGeneration.size();
 		final int populationShortage = targetPopulationSize - currentPopulationSize;
 		final List<GACandidate<Long>> missingCandidates = createRandomPopulation(populationShortage, geneDictionary);
+
+		getStatistics().setCorrectedCount(populationShortage);
 
 		return Collections.unmodifiableList(Stream.concat(missingCandidates.stream(), mutatedGeneration.stream()).collect(Collectors.toList()));
 	}
