@@ -8,6 +8,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import opt.gen.alg.domain.GADataEntry;
 import opt.gen.alg.domain.GASolution;
+import opt.gen.alg.domain.GAStatistics;
 import opt.gen.alg.service.helper.GAService;
 import opt.gen.alg.service.runner.GARunnerService;
 import opt.gen.alg.service.runner.impl.GARunnerServiceImpl;
@@ -50,6 +51,8 @@ public class MainControllerImpl implements MainController {
     public Scene buildMainScene() {
 
         final List<GASolution<Long, String>> result = getResult();
+        final GAStatistics statistics = mostDiversePopulationStrategy.getStatistics();
+
         final TableView resultTable = getResultTableWithData(result);
         final LineChart<Number, Number> lineChart = getLineChartWithData(result);
 
@@ -63,17 +66,15 @@ public class MainControllerImpl implements MainController {
 
 
     private List<GASolution<Long, String>> getResult() {
-//        final List<GADataEntry<Long, String>> realPopulation = pickLocationsService.findAll();
-//
-//        final Set<Long> geneDictionary = gaService.getGeneDictionary(realPopulation);
-//        final Map<String, List<Long>> realPopulationGrouped = gaService.getRealPopulationAsGroupedMap(realPopulation);
-//
-//        final GARunnerService<Long, String> gaRunnerService = new GARunnerServiceImpl(mostDiversePopulationStrategy);
-//        final Map<String, GASolution<Long, String>> result = gaRunnerService.run(geneDictionary, realPopulationGrouped);
-//
-//        return gaService.getResultAsList(result);
+        final List<GADataEntry<Long, String>> realPopulation = pickLocationsService.findAll();
 
-        return null;
+        final Set<Long> geneDictionary = gaService.getGeneDictionary(realPopulation);
+        final Map<String, List<Long>> realPopulationGrouped = gaService.getRealPopulationAsGroupedMap(realPopulation);
+
+        final GARunnerService<Long, String> gaRunnerService = new GARunnerServiceImpl(mostDiversePopulationStrategy);
+        final Map<String, GASolution<Long, String>> result = gaRunnerService.run(geneDictionary, realPopulationGrouped);
+
+        return gaService.getResultAsList(result);
     }
 
     private TableView getResultTableWithData(final List<GASolution<Long, String>> result) {

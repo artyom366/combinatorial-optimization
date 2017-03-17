@@ -100,7 +100,7 @@ public final class PickLocationViewDO implements Serializable, GADataEntry<Long,
 
     @Override
     public String getGroupingParameter() {
-        return getPickZoneId();
+        return getLocation();
     }
 
     public Long getId() {

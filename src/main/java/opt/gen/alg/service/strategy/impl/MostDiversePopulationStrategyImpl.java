@@ -261,7 +261,7 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 		final List<Long> newGenes = new ArrayList<>(genes);
 
 		do {
-			final Long gene = geneSamples.get(generateUniformInt(MIN_CHROMOSOME_SIZE, MAX_CHROMOSOME_SIZE));
+			final Long gene = geneSamples.get(generateUniformInt(0, geneSamples.size()));
 
 			if (isNewGeneUniqueInCandidateGeneSequence(genes, gene)) {
 				newGenes.add(gene);

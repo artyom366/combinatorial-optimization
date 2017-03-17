@@ -47,6 +47,8 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		estimateFitnessFrequency(realPopulation, initialGeneration, result);
 		// });
 
+		strategy.getStatistics().addConvergenceValue(result.size() - diversityDifference);
+
 		if (convergenceIsNotReached(result.size(), diversityDifference)) {
 			run(realPopulation, getNextGeneration(initialGeneration, geneDictionary), geneDictionary, result, result.size());
 		}
