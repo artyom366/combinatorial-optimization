@@ -1,24 +1,29 @@
 package opt.gen.alg.domain.impl;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 
 import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GASolution;
 
-public final class Result implements GASolution<Long, String> {
+public final class Result implements GASolution<Long, String, Double> {
 
 	private final GACandidate<Long> candidate;
-	private final List<String> realDataSequenceIds;
+	final Map<Pair<Double, Double>, String> realDataSequenceIds;
+	final Map<Pair<Double, Double>, String> realDataNeighbouringSequenceIds;
 
-	public Result(final GACandidate<Long> candidate, List<String> realDataSequenceIds) {
+	public Result(final GACandidate<Long> candidate, final Map<Pair<Double, Double>, String> realDataSequenceIds) {
 		Validate.notNull(candidate, "GA candidate is not defined");
 		Validate.notEmpty(realDataSequenceIds, "Real data sequence ids are not defined");
 		this.candidate = candidate;
 		this.realDataSequenceIds = realDataSequenceIds;
+		this.realDataNeighbouringSequenceIds = new HashMap<>();
 	}
 
 	@Override
@@ -27,8 +32,8 @@ public final class Result implements GASolution<Long, String> {
 	}
 
 	@Override
-	public List<String> getRealDataSequenceIds() {
-		return Collections.unmodifiableList(realDataSequenceIds);
+	public Map<Pair<Double, Double>, String> getRealDataSequenceIds() {
+		return Collections.unmodifiableMap(realDataSequenceIds);
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public final class Result implements GASolution<Long, String> {
 
 	@Override
 	public String getLocations() {
-		return realDataSequenceIds.stream().collect(Collectors.joining("-"));
+		return realDataSequenceIds.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.joining("-"));
 	}
 
 	@Override
@@ -54,5 +59,10 @@ public final class Result implements GASolution<Long, String> {
 	@Override
 	public int getLocationsCount() {
 		return realDataSequenceIds.size();
+	}
+
+	@Override
+	public void addToNeighbouringSequenceIds(final Pair<Double, Double> coordinates, final String newNeighbouringId) {
+		this.realDataNeighbouringSequenceIds.put(coordinates, newNeighbouringId);
 	}
 }

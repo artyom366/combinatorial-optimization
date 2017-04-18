@@ -1,6 +1,8 @@
 package opt.gen.ui.service.impl;
 
 import opt.gen.alg.domain.GADataEntry;
+
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,19 @@ public class PickLocationsServiceImpl implements PickLocationsService {
 
 		final List<GADataEntry<Long, String>> locations = new ArrayList<>();
 		locations.addAll((Collection<? extends GADataEntry<Long, String>>) rawData);
+
+		return locations;
+	}
+
+	@Override
+	public List<GADataEntry<Long, String>> findAllInTheSameLineAsLocation(final String location) {
+		Validate.notEmpty(location, "Location is not defined");
+
+		final String line = pickLocationsRepository.findLineByLocation(location);
+		final List<PickLocationViewDO> rawData = pickLocationsRepository.findAllInLine(line);
+
+		final List<GADataEntry<Long, String>> locations = new ArrayList<>();
+		locations.addAll(rawData);
 
 		return locations;
 	}

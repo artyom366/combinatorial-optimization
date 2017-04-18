@@ -5,17 +5,18 @@ import java.util.Map;
 import java.util.Set;
 
 import opt.gen.alg.domain.GADataEntry;
+import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GASolution;
 
-public interface GAService<OPTIMIZATION_TYPE, GROUPING_TYPE> {
+public interface GAService<OPTIMIZATION_TYPE, GROUPING_TYPE, COORDINATE_TYPE> {
 
 	Set<OPTIMIZATION_TYPE> getGeneDictionary(List<GADataEntry<OPTIMIZATION_TYPE, GROUPING_TYPE>> gaRealData);
 
 	long getPopulationSize(Set<OPTIMIZATION_TYPE> geneDictionary, double initialPopulationPercentileSize);
 
-	Map<GROUPING_TYPE, List<OPTIMIZATION_TYPE>> getRealPopulationAsGroupedMap(List<GADataEntry<OPTIMIZATION_TYPE, GROUPING_TYPE>> gaRealData);
+	List<GAPopulation<OPTIMIZATION_TYPE, GROUPING_TYPE, Double>> getRealPopulationGrouped(List<GADataEntry<OPTIMIZATION_TYPE, GROUPING_TYPE>> gaRealData);
 
-	List<GASolution<Long, String>> getResultAsList(Map<String, GASolution<Long, String>> result);
+	List<GASolution<OPTIMIZATION_TYPE, GROUPING_TYPE, COORDINATE_TYPE>> getResultAsList(Map<String, GASolution<OPTIMIZATION_TYPE, GROUPING_TYPE, COORDINATE_TYPE>> result);
 
 	String generateHash(Set<OPTIMIZATION_TYPE> genes);
 

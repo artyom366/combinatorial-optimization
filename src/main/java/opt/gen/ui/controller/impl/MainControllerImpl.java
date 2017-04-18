@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import opt.gen.alg.domain.GADataEntry;
+import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.domain.GAStatistics;
 import opt.gen.alg.domain.impl.Info;
@@ -45,7 +46,7 @@ public class MainControllerImpl implements MainController {
     private GAStrategy<Long, String> mostDiversePopulationStrategy;
 
     @Autowired
-    private GAService<Long, String> gaService;
+    private GAService<Long, String, Double> gaService;
 
     @Autowired
     private PickLocationsService pickLocationsService;
@@ -64,12 +65,12 @@ public class MainControllerImpl implements MainController {
 
         final LineChart<Number, Number> lineChart = getLineChart();
         final TableView<Info> infoTable = getInfoTable();
-        final TableView<GASolution<Long, String>> resultTable = getResultTable();
+        final TableView<GASolution<Long, String, Double>> resultTable = getResultTable();
 
         final Button startButton = ButtonFactory.getButton(35, 10, 30, 75, START_BUTTON_CAPTION);
         startButton.setOnAction(event -> {
 
-            final List<GASolution<Long, String>> result = getResult();
+            final List<GASolution<Long, String, Double>> result = getResult();
             final GAStatistics statistics = mostDiversePopulationStrategy.getStatistics();
 
             addDataToChart(lineChart, statistics);
@@ -90,20 +91,20 @@ public class MainControllerImpl implements MainController {
         return new Scene(root, WIDTH, HEIGHT);
     }
 
-    private List<GASolution<Long, String>> getResult() {
+    private List<GASolution<Long, String, Double>> getResult() {
         final List<GADataEntry<Long, String>> realPopulation = pickLocationsService.findAll();
 
         final Set<Long> geneDictionary = gaService.getGeneDictionary(realPopulation);
-        final Map<String, List<Long>> realPopulationGrouped = gaService.getRealPopulationAsGroupedMap(realPopulation);
+        final List<GAPopulation<Long, String, Double>> realPopulationGroups = gaService.getRealPopulationGrouped(realPopulation);
 
-        final GARunnerService<Long, String> gaRunnerService = new GARunnerServiceImpl(mostDiversePopulationStrategy);
-        final Map<String, GASolution<Long, String>> result = gaRunnerService.run(geneDictionary, realPopulationGrouped);
+        final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(mostDiversePopulationStrategy);
+        final Map<String, GASolution<Long, String, Double>> result = gaRunnerService.run(geneDictionary, realPopulationGroups);
 
         return gaService.getResultAsList(result);
     }
 
-    private TableView<GASolution<Long, String>> getResultTable() {
-        return (TableView<GASolution<Long, String>>) resultTableController.getResultTable();
+    private TableView<GASolution<Long, String, Double>> getResultTable() {
+        return (TableView<GASolution<Long, String, Double>>) resultTableController.getResultTable();
     }
 
     private TableView<Info> getInfoTable() {
@@ -125,8 +126,8 @@ public class MainControllerImpl implements MainController {
         lineChart.getData().add(convergence);
     }
 
-    private void addDataToResultTable(final TableView<GASolution<Long, String>> resultTable, final List<GASolution<Long, String>> result) {
-        final ObservableList<GASolution<Long, String>> tableData = FXCollections.observableList(result);
+    private void addDataToResultTable(final TableView<GASolution<Long, String, Double>> resultTable, final List<GASolution<Long, String, Double>> result) {
+        final ObservableList<GASolution<Long, String, Double>> tableData = FXCollections.observableList(result);
         clearTableView(resultTable);
         resultTable.setItems(tableData);
     }

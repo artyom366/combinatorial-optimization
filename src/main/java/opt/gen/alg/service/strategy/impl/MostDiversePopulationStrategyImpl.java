@@ -2,6 +2,7 @@ package opt.gen.alg.service.strategy.impl;
 
 import com.google.common.collect.ImmutableSet;
 import opt.gen.alg.domain.GACandidate;
+import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GAStatistics;
 import opt.gen.alg.domain.impl.Chromosome;
 import opt.gen.alg.domain.impl.Statistics;
@@ -31,7 +32,7 @@ import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInf
 public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, String> {
 
 	@Autowired
-	private GAService<Long, String> gaService;
+	private GAService<Long, String, Double> gaService;
 
 	private GAStatistics statistics;
 	private final GAStrategyInfo info;
@@ -56,8 +57,7 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	@Override
-	public List<GACandidate<Long>> initialization(final Set<Long> geneDictionary, final Map<String, List<Long>> realPopulation) {
-		Validate.notEmpty(realPopulation, "GA real population is not defined");
+	public List<GACandidate<Long>> initialization(final Set<Long> geneDictionary) {
 		Validate.notEmpty(geneDictionary, "Gene dictionary is not defined");
 
 		final long populationSize = gaService.getPopulationSize(geneDictionary, POPULATION_PERCENTILE_SIZE);

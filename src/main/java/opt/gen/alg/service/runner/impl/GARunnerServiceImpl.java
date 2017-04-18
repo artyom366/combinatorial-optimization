@@ -7,16 +7,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.math3.util.DoubleArray;
 import org.springframework.stereotype.Service;
 
 import opt.gen.alg.domain.GACandidate;
+import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.domain.impl.Result;
 import opt.gen.alg.service.runner.GARunnerService;
 import opt.gen.alg.service.strategy.GAStrategy;
 
 @Service("gaRunnerService")
-public class GARunnerServiceImpl implements GARunnerService<Long, String> {
+public class GARunnerServiceImpl implements GARunnerService<Long, String, Double> {
 
 	private final GAStrategy<Long, String> strategy;
 
@@ -25,27 +29,26 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 	}
 
 	@Override
-	public Map<String, GASolution<Long, String>> run(final Set<Long> geneDictionary, final Map<String, List<Long>> realPopulation) {
-		Validate.notEmpty(realPopulation, "GA real population is not defined");
+	public Map<String, GASolution<Long, String, Double>> run(final Set<Long> geneDictionary, final List<GAPopulation<Long, String, Double>> realPopulationGroups) {
+		Validate.notEmpty(realPopulationGroups, "GA real population is not defined");
 
 		strategy.init();
 
-		final List<GACandidate<Long>> initialPopulation =
-			Validate.notEmpty(strategy.initialization(geneDictionary, realPopulation), "Initial population is not defined");
+		final List<GACandidate<Long>> initialPopulation = Validate.notEmpty(strategy.initialization(geneDictionary), "Initial population is not defined");
 
-		final Map<String, GASolution<Long, String>> result = new HashMap<>();
-		run(realPopulation, initialPopulation, geneDictionary, result, result.size());
+		final Map<String, GASolution<Long, String, Double>> result = new HashMap<>();
+		run(realPopulationGroups, initialPopulation, geneDictionary, result, result.size());
 
 		return result;
 	}
 
-	private void run(final Map<String, List<Long>> realPopulation, final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary,
-			final Map<String, GASolution<Long, String>> result, final int diversityDifference) {
+	private void run(final List<GAPopulation<Long, String, Double>> realPopulationGroups, final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary,
+			final Map<String, GASolution<Long, String, Double>> result, final int diversityDifference) {
 
 		// final ForkJoinPool forkJoinPool = new
 		// ForkJoinPool(strategy.getParallelismLevel());
 		// forkJoinPool.submit(() -> {
-		estimateFitnessFrequency(realPopulation, initialGeneration, result);
+		estimateFitnessFrequency(realPopulationGroups, initialGeneration, result);
 		// });
 
 		strategy.getStatistics().incrementCurrentIteration();
@@ -58,7 +61,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		strategy.getStatistics().addCombinationTotalValue(result.size());
 
 		if (convergenceIsNotReached(result.size(), diversityDifference)) {
-			run(realPopulation, getNextGeneration(initialGeneration, geneDictionary), geneDictionary, result, result.size());
+			run(realPopulationGroups, getNextGeneration(initialGeneration, geneDictionary), geneDictionary, result, result.size());
 		}
 	}
 
@@ -84,15 +87,15 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String> {
 		return strategy.getInfo().getConvergenceRetryThreshold() >= strategy.getStatistics().getCurrentConvergenceRetriesCount();
 	}
 
-	private void estimateFitnessFrequency(final Map<String, List<Long>> realPopulation, final List<GACandidate<Long>> nextGeneration,
-			final Map<String, GASolution<Long, String>> result) {
+	private void estimateFitnessFrequency(final List<GAPopulation<Long, String, Double>> realPopulationGroups, final List<GACandidate<Long>> nextGeneration,
+			final Map<String, GASolution<Long, String, Double>> result) {
 
 		nextGeneration.stream().forEach(candidate -> {
-			final List<String> realSequenceIds = new ArrayList<>();
+			final Map<Pair<Double, Double>, String> realSequenceIds = new HashMap<>();
 
-			realPopulation.forEach((id, real) -> {
-				if (contains(real, candidate.getGeneSequence())) {
-					realSequenceIds.add(id);
+			realPopulationGroups.forEach(real -> {
+				if (contains(real.getOptimizationParameters(), candidate.getGeneSequence())) {
+					realSequenceIds.put(new ImmutablePair<>(real.getCoordinateX(), real.getCoordinateY()), real.getGroupingParameter());
 				}
 			});
 

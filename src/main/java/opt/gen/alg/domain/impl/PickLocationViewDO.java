@@ -103,7 +103,17 @@ public final class PickLocationViewDO implements Serializable, GADataEntry<Long,
         return getLocation();
     }
 
-    public Long getId() {
+	@Override
+	public Double getCoordinateX() {
+		return getX();
+	}
+
+	@Override
+	public Double getCoordinateY() {
+		return getY();
+	}
+
+	public Long getId() {
 		return id;
 	}
 

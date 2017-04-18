@@ -88,7 +88,7 @@ public final class Statistics implements GAStatistics {
 	}
 
 	@Override
-	public void setTotalNonUniqueCount(final Map<String, GASolution<Long, String>> result) {
+	public void setTotalNonUniqueCount(final Map<String, GASolution<Long, String, Double>> result) {
 		final long count = result.entrySet().stream().filter(value -> value.getValue().getRealDataSequenceIds().size() > 1).count();
 		getCurrentIterationInfo().setTotalNonUniqueCount((int) count);
 	}

@@ -31,7 +31,7 @@ public interface GAStatistics {
 
 	void setTotalCount(int totalCount);
 
-    void setTotalNonUniqueCount(Map<String, GASolution<Long, String>> result);
+    void setTotalNonUniqueCount(Map<String, GASolution<Long, String, Double>> result);
 
 	List<Info> getRunnerInfo();
 }

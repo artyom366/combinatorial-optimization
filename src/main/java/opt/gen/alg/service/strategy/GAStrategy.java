@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import opt.gen.alg.domain.GACandidate;
+import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GAStatistics;
 
 public interface GAStrategy<OPTIMIZATION_TYPE, GROUPING_TYPE> {
@@ -15,7 +16,7 @@ public interface GAStrategy<OPTIMIZATION_TYPE, GROUPING_TYPE> {
 
 	GAStrategyInfo getInfo();
 
-	List<GACandidate<Long>> initialization(Set<OPTIMIZATION_TYPE> geneDictionary, Map<GROUPING_TYPE, List<OPTIMIZATION_TYPE>> realPopulation);
+	List<GACandidate<Long>> initialization(Set<OPTIMIZATION_TYPE> geneDictionary);
 
 	List<GACandidate<OPTIMIZATION_TYPE>> crossover(List<GACandidate<OPTIMIZATION_TYPE>> initialGeneration);
 
