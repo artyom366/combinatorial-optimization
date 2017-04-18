@@ -69,7 +69,7 @@ public class GAServiceImplTest {
 	private void mockRealDataParameters() {
 		REAL_DATA.forEach(data -> {
 			((PickLocationViewDO)data).setCustomerId(RandomGenerator.generateUniformLong(200));
-			((PickLocationViewDO)data).setPickZoneId("A-" + RandomGenerator.generateUniformLong(200));
+			((PickLocationViewDO)data).setLocation("A-" + RandomGenerator.generateUniformLong(200));
 		});
 	}
 

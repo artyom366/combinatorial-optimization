@@ -88,9 +88,9 @@ public final class PickLocationViewDO implements Serializable, GADataEntry<Long,
         this.customerId = customerId;
     }
 
-	public PickLocationViewDO(final Long customerId, final String pickZoneId) {
+	public PickLocationViewDO(final Long customerId, final String location) {
 		this.customerId = customerId;
-		this.pickZoneId = pickZoneId;
+		this.location = location;
 	}
 
 	@Override
