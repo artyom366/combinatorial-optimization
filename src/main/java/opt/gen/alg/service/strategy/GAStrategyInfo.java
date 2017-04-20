@@ -5,4 +5,7 @@ public interface GAStrategyInfo {
 	int getConvergenceRetryThreshold();
 
 	int getConvergenceRetries();
+
+	double getNeighboursDistance();
+
 }

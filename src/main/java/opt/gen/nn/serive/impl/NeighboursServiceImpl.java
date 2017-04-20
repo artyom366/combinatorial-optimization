@@ -3,7 +3,9 @@ package opt.gen.nn.serive.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,29 +24,51 @@ public class NeighboursServiceImpl implements NeighboursService {
 	private PickLocationsService pickLocationsService;
 
 	@Override
-	public void getPossibleNeighbours(final List<GASolution<Long, String, Double>> candidates, final float distance) {
-		Validate.notNull(candidates, "Location are not defined");
+	public void searchForLocationPossibleNeighbours(final Map<String, GASolution<Long, String, Double>> results, final double distance) {
+		Validate.notNull(results, "Result locations are not defined");
 
-		for (final GASolution<Long, String, Double> candidate : candidates) {
-			final Map<Pair<Double, Double>, String> realDataSequenceIds = candidate.getRealDataSequenceIds();
+		results.entrySet().forEach(entry -> {
 
-			realDataSequenceIds.entrySet().forEach(e -> {
+			final Set<Long> currentCustomers = entry.getValue().getSolutionCandidate().getGeneSequence();
 
-				final Pair<Double, Double> coordinates = e.getKey();
-				final String location = e.getValue();
+			searchForLocationPossibleNeighboursInResultEntry(entry, distance, currentCustomers);
+		});
+	}
 
-				final List<GADataEntry<Long, String>> lineLocations = pickLocationsService.findAllInTheSameLineAsLocation(location);
+	private void searchForLocationPossibleNeighboursInResultEntry(final Map.Entry<String, GASolution<Long, String, Double>> entry, final double distance,
+																  final Set<Long> currentCustomers) {
 
-				lineLocations.forEach(l -> {
+		final GASolution<Long, String, Double> resultEntry = entry.getValue();
+		final Map<Pair<Double, Double>, String> locations = resultEntry.getRealDataSequenceIds();
+		locations.entrySet().forEach(
+				locationEntry -> searchForLocationPossibleNeighboursInResultEntryLocations(locationEntry, currentCustomers, resultEntry, distance));
+	}
 
-					final Optional<Double> optionalDistance =
-						getOptionalLocationsDistance(l.getCoordinateX(), l.getCoordinateY(), coordinates.getLeft(), coordinates.getRight());
+	private void searchForLocationPossibleNeighboursInResultEntryLocations(final Map.Entry<Pair<Double, Double>, String> locationEntry,
+																		   final Set<Long> currentCustomers, final GASolution<Long, String, Double>
+																				   resultEntry,
+																		   final double distance) {
 
-					if (distanceIsPresentAndInRange(optionalDistance, distance)) {
-						candidate.addToNeighbouringSequenceIds(new ImmutablePair<>(l.getCoordinateX(), l.getCoordinateY()), l.getGroupingParameter());
-					}
-				});
-			});
+		final Pair<Double, Double> locationCoordinates = locationEntry.getKey();
+		final String locationName = locationEntry.getValue();
+
+		final List<GADataEntry<Long, String>> lineLocations = pickLocationsService.findAllInTheSameLineAsLocation(locationName);
+
+		lineLocations.forEach(
+				lineLocation -> evaluatePossibleNeighbouringLocation(lineLocation, locationCoordinates, currentCustomers, locationName, resultEntry,
+																	 distance));
+	}
+
+	private void evaluatePossibleNeighbouringLocation(final GADataEntry<Long, String> lineLocation, final Pair<Double, Double> locationCoordinates,
+													  final Set<Long> currentCustomers, final String locationName,
+													  final GASolution<Long, String, Double> resultEntry, final double distance) {
+
+		final Optional<Double> optionalDistance = getOptionalLocationsDistance(lineLocation.getCoordinateX(), lineLocation.getCoordinateY(),
+																			   locationCoordinates.getLeft(), locationCoordinates.getRight());
+
+		if (isValidNeighbouringLocation(optionalDistance, distance, locationName, lineLocation, currentCustomers)) {
+			resultEntry.addToNeighbouringSequenceIds(new ImmutablePair<>(lineLocation.getCoordinateX(), lineLocation.getCoordinateY()),
+													 lineLocation.getGroupingParameter());
 		}
 	}
 
@@ -58,8 +82,32 @@ public class NeighboursServiceImpl implements NeighboursService {
 		return Optional.empty();
 	}
 
-	private boolean distanceIsPresentAndInRange(final Optional<Double> optionalDistance, final float distance) {
+	private boolean distanceIsPresentAndInRange(final Optional<Double> optionalDistance, final double distance) {
 		return optionalDistance.isPresent() && optionalDistance.get() <= distance;
+	}
+
+	private boolean isValidNeighbouringLocation(final Optional<Double> optionalDistance, final double distance, final String currentLocationName,
+												final GADataEntry<Long, String> potentialLocation, final Set<Long> currentCustomers) {
+
+		return distanceIsPresentAndInRange(optionalDistance, distance) && isOptimizationParameterMatch(currentLocationName, potentialLocation,
+																									   currentCustomers);
+	}
+
+	private boolean isOptimizationParameterMatch(final String currentLocationName, final GADataEntry<Long, String> potentialLocation,
+												 Set<Long> currentCustomers) {
+
+		final String potentialNeighbourLocationName = potentialLocation.getGroupingParameter();
+		final Long potentialCustomerId = potentialLocation.getOptimizationParameter();
+
+		return isLocationsAreNotTheSame(currentLocationName, potentialNeighbourLocationName) && isCustomerMatch(currentCustomers, potentialCustomerId);
+	}
+
+	private boolean isLocationsAreNotTheSame(final String currentLocationName, final String potentialNeighbourLocationName) {
+		return !StringUtils.equalsIgnoreCase(currentLocationName, potentialNeighbourLocationName);
+	}
+
+	private boolean isCustomerMatch(final Set<Long> currentCustomers, final Long potentialCustomerId) {
+		return currentCustomers.contains(potentialCustomerId);
 	}
 
 }

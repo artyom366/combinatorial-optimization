@@ -1,10 +1,10 @@
 package opt.gen.nn.serive;
 
-import java.util.List;
+import java.util.Map;
 
 import opt.gen.alg.domain.GASolution;
 
 public interface NeighboursService {
 
-	void getPossibleNeighbours(List<GASolution<Long, String, Double>> locations, float distance);
+	void searchForLocationPossibleNeighbours(Map<String, GASolution<Long, String, Double>> result, double distance);
 }

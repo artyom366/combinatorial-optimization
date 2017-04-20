@@ -17,6 +17,7 @@ import opt.gen.alg.service.helper.GAService;
 import opt.gen.alg.service.runner.GARunnerService;
 import opt.gen.alg.service.runner.impl.GARunnerServiceImpl;
 import opt.gen.alg.service.strategy.GAStrategy;
+import opt.gen.nn.serive.NeighboursService;
 import opt.gen.ui.component.ButtonFactory;
 import opt.gen.ui.controller.ChartController;
 import opt.gen.ui.controller.InfoTableController;
@@ -41,7 +42,6 @@ public class MainControllerImpl implements MainController {
     private final static String START_BUTTON_CAPTION = "Start";
     private final static String CLEAR_BUTTON_CAPTION = "Clear";
 
-
     @Autowired
     private GAStrategy<Long, String> mostDiversePopulationStrategy;
 
@@ -50,6 +50,9 @@ public class MainControllerImpl implements MainController {
 
     @Autowired
     private PickLocationsService pickLocationsService;
+
+    @Autowired
+    private NeighboursService neighboursService;
 
     @Autowired
     private ResultTableController resultTableController;
@@ -99,6 +102,8 @@ public class MainControllerImpl implements MainController {
 
         final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(mostDiversePopulationStrategy);
         final Map<String, GASolution<Long, String, Double>> result = gaRunnerService.run(geneDictionary, realPopulationGroups);
+
+        neighboursService.searchForLocationPossibleNeighbours(result, mostDiversePopulationStrategy.getInfo().getNeighboursDistance());
 
         return gaService.getResultAsList(result);
     }

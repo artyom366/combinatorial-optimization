@@ -13,6 +13,7 @@ public final class MostDiversePopulationStrategyInfo implements GAStrategyInfo {
 	public static final int PARALLELISM_LEVEL = 4;
 	public static final double PROBABILITY_OF_MUTATION = 0.05d;
 	public static final int CROSSOVER_INDEX_LOWER_BOUND = 1;
+	public static final double NEIGHBOURS_DISTANCE = 5d;
 
 	@Override
 	public int getConvergenceRetryThreshold() {
@@ -22,5 +23,10 @@ public final class MostDiversePopulationStrategyInfo implements GAStrategyInfo {
 	@Override
 	public int getConvergenceRetries() {
 		return CONVERGENCE_RETRIES;
+	}
+
+	@Override
+	public double getNeighboursDistance() {
+		return NEIGHBOURS_DISTANCE;
 	}
 }
