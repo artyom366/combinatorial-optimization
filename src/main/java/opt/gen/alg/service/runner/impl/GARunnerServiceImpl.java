@@ -91,16 +91,19 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 			final Map<String, GASolution<Long, String, Double>> result) {
 
 		nextGeneration.stream().forEach(candidate -> {
-			final Map<Pair<Double, Double>, String> realSequenceIds = new HashMap<>();
+			if (!result.containsKey(candidate.getHash())) {
 
-			realPopulationGroups.forEach(real -> {
-				if (contains(real.getOptimizationParameters(), candidate.getGeneSequence())) {
-					realSequenceIds.put(new ImmutablePair<>(real.getCoordinateX(), real.getCoordinateY()), real.getGroupingParameter());
+				final Map<Pair<Double, Double>, String> realSequenceIds = new HashMap<>();
+
+				realPopulationGroups.forEach(real -> {
+					if (contains(real.getOptimizationParameters(), candidate.getGeneSequence())) {
+						realSequenceIds.put(new ImmutablePair<>(real.getCoordinateX(), real.getCoordinateY()), real.getGroupingParameter());
+					}
+				});
+
+				if (!realSequenceIds.isEmpty()) {
+					result.put(candidate.getHash(), new Result(candidate, realSequenceIds));
 				}
-			});
-
-			if (!realSequenceIds.isEmpty()) {
-				result.put(candidate.getHash(), new Result(candidate, realSequenceIds));
 			}
 		});
 	}

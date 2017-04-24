@@ -22,6 +22,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import opt.gen.alg.domain.GADataEntry;
+import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.impl.PickLocationViewDO;
 import opt.gen.alg.generator.RandomGenerator;
 
@@ -56,20 +57,22 @@ public class GAServiceImplTest {
 		assertEquals("Initial population size is not correct", result, DICTIONARY.size());
 	}
 
-//	@Test
-//	public void getRealPopulationAsGroupedMap() throws Exception {
-//		mockRealDataParameters();
-//
-//		final Map<String, List<Long>> result = gaService.getRealPopulationGrouped(REAL_DATA);
-//		assertThat("Population map should not be null", result, is(notNullValue()));
-//		assertTrue("Population map size is not correct", result.size() <= REAL_DATA.size());
-//		result.entrySet().forEach(sequence -> assertFalse("Population entry should not be empty", sequence.getValue().isEmpty()));
-//	}
+	@Test
+	public void getRealPopulationAsGroupedMap() throws Exception {
+		mockRealDataParameters();
+
+		final List<GAPopulation<Long, String, Double>> result = gaService.getRealPopulationGrouped(REAL_DATA);
+		assertThat("Population list should not be null", result, is(notNullValue()));
+		assertTrue("Population list size is not correct", result.size() <= REAL_DATA.size());
+		result.forEach(sequence -> assertFalse("Population optimization parameters be empty", sequence.getOptimizationParameters().isEmpty()));
+	}
 
 	private void mockRealDataParameters() {
 		REAL_DATA.forEach(data -> {
 			((PickLocationViewDO)data).setCustomerId(RandomGenerator.generateUniformLong(200));
 			((PickLocationViewDO)data).setLocation("A-" + RandomGenerator.generateUniformLong(200));
+			((PickLocationViewDO)data).setX(RandomGenerator.generateUniformDouble());
+			((PickLocationViewDO)data).setY(RandomGenerator.generateUniformDouble());
 		});
 	}
 
