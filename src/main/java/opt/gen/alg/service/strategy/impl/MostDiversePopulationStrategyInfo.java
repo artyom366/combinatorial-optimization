@@ -29,4 +29,9 @@ public final class MostDiversePopulationStrategyInfo implements GAStrategyInfo {
 	public double getNeighboursDistance() {
 		return NEIGHBOURS_DISTANCE;
 	}
+
+	@Override
+	public int getParallelismLevel() {
+		return PARALLELISM_LEVEL;
+	}
 }

@@ -1,15 +1,15 @@
 package opt.gen.alg.service.runner.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.math3.util.DoubleArray;
 import org.springframework.stereotype.Service;
 
 import opt.gen.alg.domain.GACandidate;
@@ -22,14 +22,15 @@ import opt.gen.alg.service.strategy.GAStrategy;
 @Service("gaRunnerService")
 public class GARunnerServiceImpl implements GARunnerService<Long, String, Double> {
 
-	private final GAStrategy<Long, String> strategy;
+	private final GAStrategy<Long, String, Double> strategy;
 
-	public GARunnerServiceImpl(final GAStrategy<Long, String> strategy) {
+	public GARunnerServiceImpl(final GAStrategy<Long, String, Double> strategy) {
 		this.strategy = strategy;
 	}
 
 	@Override
-	public Map<String, GASolution<Long, String, Double>> run(final Set<Long> geneDictionary, final List<GAPopulation<Long, String, Double>> realPopulationGroups) {
+	public Map<String, GASolution<Long, String, Double>> run(final Set<Long> geneDictionary,
+			final List<GAPopulation<Long, String, Double>> realPopulationGroups) {
 		Validate.notEmpty(realPopulationGroups, "GA real population is not defined");
 
 		strategy.init();
@@ -42,14 +43,14 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		return result;
 	}
 
-	private void run(final List<GAPopulation<Long, String, Double>> realPopulationGroups, final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary,
-			final Map<String, GASolution<Long, String, Double>> result, final int diversityDifference) {
+	private void run(final List<GAPopulation<Long, String, Double>> realPopulationGroups, final List<GACandidate<Long>> initialGeneration,
+			final Set<Long> geneDictionary, final Map<String, GASolution<Long, String, Double>> result, final int diversityDifference) {
 
-		// final ForkJoinPool forkJoinPool = new
-		// ForkJoinPool(strategy.getParallelismLevel());
-		// forkJoinPool.submit(() -> {
-		estimateFitnessFrequency(realPopulationGroups, initialGeneration, result);
-		// });
+		final ForkJoinPool forkJoinPool = new ForkJoinPool(strategy.getInfo().getParallelismLevel());
+		final ForkJoinTask<?> forkJoinTask = forkJoinPool.submit(() -> {
+			estimateFitnessFrequency(realPopulationGroups, initialGeneration, result);
+		});
+		forkJoinTask.join();
 
 		strategy.getStatistics().incrementCurrentIteration();
 		strategy.getStatistics().setNewCombinationsCount(result.size() - diversityDifference);
@@ -61,7 +62,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		strategy.getStatistics().addCombinationTotalValue(result.size());
 
 		if (convergenceIsNotReached(result.size(), diversityDifference)) {
-			run(realPopulationGroups, getNextGeneration(initialGeneration, geneDictionary), geneDictionary, result, result.size());
+			run(realPopulationGroups, getNextGeneration(initialGeneration, geneDictionary, result), geneDictionary, result, result.size());
 		}
 	}
 
@@ -112,12 +113,13 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		return realGeneSequence.containsAll(individualGeneSequence);
 	}
 
-	private List<GACandidate<Long>> getNextGeneration(final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary) {
+	private List<GACandidate<Long>> getNextGeneration(final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary,
+			final Map<String, GASolution<Long, String, Double>> result) {
 
 		final List<GACandidate<Long>> nextGeneration = strategy.crossover(initialGeneration);
 		Validate.notEmpty(nextGeneration, "Next generation is not defined");
 
-		final List<GACandidate<Long>> refinedGeneration = strategy.selection(initialGeneration, nextGeneration);
+		final List<GACandidate<Long>> refinedGeneration = strategy.selection(initialGeneration, nextGeneration, result);
 		Validate.notEmpty(refinedGeneration, "Refined generation is not defined");
 
 		final List<GACandidate<Long>> mutatedGeneration = strategy.mutation(refinedGeneration, geneDictionary);

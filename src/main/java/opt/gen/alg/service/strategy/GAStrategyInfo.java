@@ -8,4 +8,5 @@ public interface GAStrategyInfo {
 
 	double getNeighboursDistance();
 
+	int getParallelismLevel();
 }

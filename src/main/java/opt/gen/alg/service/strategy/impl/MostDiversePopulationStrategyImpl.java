@@ -3,6 +3,7 @@ package opt.gen.alg.service.strategy.impl;
 import com.google.common.collect.ImmutableSet;
 import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GAPopulation;
+import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.domain.GAStatistics;
 import opt.gen.alg.domain.impl.Chromosome;
 import opt.gen.alg.domain.impl.Statistics;
@@ -29,7 +30,7 @@ import static opt.gen.alg.generator.RandomGenerator.generateUniformInt;
 import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.*;
 
 @Service("mostDiversePopulationStrategy")
-public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, String> {
+public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, String, Double> {
 
 	@Autowired
 	private GAService<Long, String, Double> gaService;
@@ -189,7 +190,8 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	@Override
-	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration, final List<GACandidate<Long>> nextGeneration) {
+	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration, final List<GACandidate<Long>> nextGeneration,
+											 final Map<String, GASolution<Long, String, Double>> result) {
 		Validate.notEmpty(nextGeneration, "Next generation is not defined");
 		return nextGeneration;
 	}

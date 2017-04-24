@@ -25,6 +25,7 @@ import opt.gen.ui.controller.MainController;
 import opt.gen.ui.controller.ResultTableController;
 import opt.gen.ui.service.PickLocationsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,7 +44,10 @@ public class MainControllerImpl implements MainController {
     private final static String CLEAR_BUTTON_CAPTION = "Clear";
 
     @Autowired
-    private GAStrategy<Long, String> mostDiversePopulationStrategy;
+    private GAStrategy<Long, String, Double> mostDiversePopulationStrategy;
+
+//    @Autowired
+//    private GAStrategy<Long, String, Double> partialPopulationSelectionStrategy;
 
     @Autowired
     private GAService<Long, String, Double> gaService;
