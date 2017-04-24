@@ -40,6 +40,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		final Map<String, GASolution<Long, String, Double>> result = new HashMap<>();
 		run(realPopulationGroups, initialPopulation, geneDictionary, result, result.size());
 
+		final long executionTimeInMillis = strategy.getStatistics().getExecutionTimeInMillis();
 		return result;
 	}
 
@@ -47,10 +48,10 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 			final Set<Long> geneDictionary, final Map<String, GASolution<Long, String, Double>> result, final int diversityDifference) {
 
 		final ForkJoinPool forkJoinPool = new ForkJoinPool(strategy.getInfo().getParallelismLevel());
-		final ForkJoinTask<?> forkJoinTask = forkJoinPool.submit(() -> {
+		//final ForkJoinTask<?> forkJoinTask = forkJoinPool.submit(() -> {
 			estimateFitnessFrequency(realPopulationGroups, initialGeneration, result);
-		});
-		forkJoinTask.join();
+		//});
+		//forkJoinTask.join();
 
 		strategy.getStatistics().incrementCurrentIteration();
 		strategy.getStatistics().setNewCombinationsCount(result.size() - diversityDifference);

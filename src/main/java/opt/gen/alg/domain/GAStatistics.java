@@ -34,4 +34,6 @@ public interface GAStatistics {
     void setTotalNonUniqueCount(Map<String, GASolution<Long, String, Double>> result);
 
 	List<Info> getRunnerInfo();
+
+	long getExecutionTimeInMillis();
 }

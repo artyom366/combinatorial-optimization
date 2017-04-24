@@ -17,13 +17,16 @@ public final class Statistics implements GAStatistics {
 	private int currentIteration;
 	private final Map<Integer, Info> info;
 
+	private long start;
+	private long end;
+
 	public Statistics() {
 		this.currentIteration = 0;
 		this.convergenceRetries = 0;
 		this.convergences = new LinkedList<>();
 		this.combinations = new LinkedList<>();
 		this.info = new HashMap<>();
-
+		this.start = System.currentTimeMillis();
 	}
 
 	@Override
@@ -100,5 +103,11 @@ public final class Statistics implements GAStatistics {
 	@Override
 	public List<Info> getRunnerInfo() {
 		return this.info.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
+	}
+
+	@Override
+	public long getExecutionTimeInMillis() {
+		this.end = System.currentTimeMillis();
+		return this.end - this.start;
 	}
 }
