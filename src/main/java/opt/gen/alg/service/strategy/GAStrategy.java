@@ -18,10 +18,9 @@ public interface GAStrategy<OPTIMIZATION_TYPE, GROUPING_TYPE, COORDINATE_TYPE> {
 
 	List<GACandidate<OPTIMIZATION_TYPE>> initialization(Set<OPTIMIZATION_TYPE> geneDictionary);
 
-	List<GACandidate<OPTIMIZATION_TYPE>> selection(List<GACandidate<OPTIMIZATION_TYPE>> initialGeneration, List<GACandidate<OPTIMIZATION_TYPE>> nextGeneration,
-												   Map<String, GASolution<OPTIMIZATION_TYPE, GROUPING_TYPE, COORDINATE_TYPE>> result);
-
 	List<GACandidate<OPTIMIZATION_TYPE>> crossover(List<GACandidate<OPTIMIZATION_TYPE>> initialGeneration);
+
+	List<GACandidate<OPTIMIZATION_TYPE>> selection(List<GACandidate<OPTIMIZATION_TYPE>> initialGeneration, Map<String, GASolution<OPTIMIZATION_TYPE, GROUPING_TYPE, COORDINATE_TYPE>> result);
 
 	List<GACandidate<OPTIMIZATION_TYPE>> mutation(List<GACandidate<OPTIMIZATION_TYPE>> refinedGeneration, Set<OPTIMIZATION_TYPE> geneDictionary);
 

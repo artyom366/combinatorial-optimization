@@ -104,6 +104,13 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	}
 
 	@Override
+	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration,
+											 final Map<String, GASolution<Long, String, Double>> result) {
+		Validate.notEmpty(initialGeneration, "Next generation is not defined");
+		return initialGeneration;
+	}
+
+	@Override
 	public List<GACandidate<Long>> crossover(final List<GACandidate<Long>> parentGeneration) {
 		Validate.notEmpty(parentGeneration, "Parent generation is not defined");
 		Validate.isTrue(parentGeneration.size() % 2 == 0, "Parent generation size is not even");
@@ -187,13 +194,6 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 		}
 
 		return new Chromosome(Collections.EMPTY_SET, StringUtils.EMPTY);
-	}
-
-	@Override
-	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration, final List<GACandidate<Long>> nextGeneration,
-											 final Map<String, GASolution<Long, String, Double>> result) {
-		Validate.notEmpty(nextGeneration, "Next generation is not defined");
-		return nextGeneration;
 	}
 
 	@Override

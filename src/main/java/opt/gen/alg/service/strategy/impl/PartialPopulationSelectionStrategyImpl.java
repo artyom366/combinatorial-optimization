@@ -15,7 +15,7 @@ import opt.gen.alg.service.strategy.GAStrategy;
 //@Service("partialPopulationSelectionStrategy")
 public class PartialPopulationSelectionStrategyImpl extends MostDiversePopulationStrategyImpl {
 
-	@Override
+	//@Override
 	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration, final List<GACandidate<Long>> nextGeneration, final Map<String, GASolution<Long, String, Double>> result) {
 		Validate.notEmpty(initialGeneration, "Initial generation is not defined");
 		Validate.notEmpty(nextGeneration, "Next generation is not defined");

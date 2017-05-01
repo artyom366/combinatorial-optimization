@@ -117,13 +117,13 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 	private List<GACandidate<Long>> getNextGeneration(final List<GACandidate<Long>> initialGeneration, final Set<Long> geneDictionary,
 			final Map<String, GASolution<Long, String, Double>> result) {
 
-		final List<GACandidate<Long>> nextGeneration = strategy.crossover(initialGeneration);
-		Validate.notEmpty(nextGeneration, "Next generation is not defined");
-
-		final List<GACandidate<Long>> refinedGeneration = strategy.selection(initialGeneration, nextGeneration, result);
+		final List<GACandidate<Long>> refinedGeneration = strategy.selection(initialGeneration, result);
 		Validate.notEmpty(refinedGeneration, "Refined generation is not defined");
 
-		final List<GACandidate<Long>> mutatedGeneration = strategy.mutation(refinedGeneration, geneDictionary);
+		final List<GACandidate<Long>> nextGeneration = strategy.crossover(refinedGeneration);
+		Validate.notEmpty(nextGeneration, "Next generation is not defined");
+
+		final List<GACandidate<Long>> mutatedGeneration = strategy.mutation(nextGeneration, geneDictionary);
 		Validate.notEmpty(mutatedGeneration, "Mutated generation is not defined");
 
 		final List<GACandidate<Long>> correctedGeneration = strategy.correction(mutatedGeneration, initialGeneration, geneDictionary);
