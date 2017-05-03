@@ -1,19 +1,16 @@
 package opt.gen.alg.service.strategy.impl;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.*;
-import opt.gen.alg.error.EmptyIntervalException;
 import opt.gen.alg.generator.RandomGenerator;
-import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.lang3.Validate;
 
 import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GASolution;
-import org.springframework.util.MultiValueMap;
+import org.springframework.stereotype.Service;
 
-//@Service("stochasticUniversalSamplingStrategy")
+@Service("stochasticUniversalSamplingStrategy")
 public class StochasticUniversalSamplingStrategyImpl extends MostDiversePopulationStrategyImpl {
 
 	@Override
@@ -23,87 +20,65 @@ public class StochasticUniversalSamplingStrategyImpl extends MostDiversePopulati
 		Validate.notEmpty(initialGeneration, "Initial generation is not defined");
 		Validate.notEmpty(result, "GA result is not defined");
 
+		final int populationSize = initialGeneration.size();
 		final int totalFitnessValue = getTotalFitnessValue(result);
-		final Multimap<Double, GACandidate<Long>> individualFitnessRatioValues = ArrayListMultimap.create();
+		final Map<Double, GACandidate<Long>> individualFitnessRatioValues = new TreeMap<>();
 
-		initialGeneration.forEach(e -> {
-			final GASolution<Long, String, Double> individual = result.get(e.getHash());
+		double fitnessInterval = 0;
+
+		for (final GACandidate<Long> entry : initialGeneration) {
+			final GASolution<Long, String, Double> individual = result.get(entry.getHash());
+
+			if (individual == null) {
+				continue;
+			}
+
 			final int fitnessValue = individual.getRealDataSequenceIds().size();
+			fitnessInterval += (double)fitnessValue / totalFitnessValue;
+			individualFitnessRatioValues.put(fitnessInterval, entry);
+		}
 
-			final double fitnessRatio = (double)fitnessValue / totalFitnessValue;
-			individualFitnessRatioValues.put(fitnessRatio, e);
-		});
-
-		selection(individualFitnessRatioValues);
-
-		return null;
+		return selection(individualFitnessRatioValues, populationSize);
 	}
 
 	private int getTotalFitnessValue(final Map<String, GASolution<Long, String, Double>> result) {
 		return result.entrySet().stream().mapToInt(e -> e.getValue().getRealDataSequenceIds().size()).sum();
 	}
 
-	private Optional<Integer> getMaxFitnessValue(final Map<String, GASolution<Long, String, Double>> result) {
-		final List<Integer> fitnessValues = result.entrySet().stream().
-				mapToInt(e -> e.getValue().getRealDataSequenceIds().size()).mapToObj(v -> v).collect(Collectors.toList());
 
-		final OptionalInt maxFitnessValue = fitnessValues.stream().mapToInt(Integer::intValue).max();
+	private List<GACandidate<Long>> selection(final Map<Double, GACandidate<Long>> individualFitnessRatioValues, final int populationSize) {
 
-		if (maxFitnessValue.isPresent()) {
-			return Optional.of(maxFitnessValue.getAsInt());
-		}
+		final double intervalMax = getIntervalMax(individualFitnessRatioValues);
+		final List<Double> intervals = new ArrayList<>(individualFitnessRatioValues.keySet());
 
-		return Optional.empty();
-	}
+		final List<GACandidate<Long>> nextGeneration = new ArrayList<>();
 
-	private void selection(final Multimap<Double, GACandidate<Long>> individualFitnessRatioValues) {
+		for (int i = 0; i < populationSize; i++) {
+			final double randomInterval = RandomGenerator.generateUniformDouble(intervalMax);
 
-		final List<Double> intervals = getIntervals(individualFitnessRatioValues.keySet());
-		final List<Double> selectedIntervals = new ArrayList<>();
+			for (int j = 1; j < intervals.size(); j++) {
+				final double intervalStart = intervals.get(j - 1);
+				final double intervalEnd = intervals.get(j);
 
-		final Multiset<Double> keys = individualFitnessRatioValues.keys();
+				if (randomInterval > intervalStart && randomInterval <= intervalEnd) {
+					final GACandidate<Long> individual = individualFitnessRatioValues.get(intervalEnd);
+					nextGeneration.add(individual);
+					break;
 
-		keys.stream().forEach(k -> {
-			final Collection<GACandidate<Long>> candidates = individualFitnessRatioValues.get(k);
-
-			candidates.forEach(e -> {
-				final double randomIntervalValue = RandomGenerator.generateUniformDouble();
-				final double interval = getInterval(intervals, randomIntervalValue);
-				selectedIntervals.add(interval);
-			});
-		});
-
-		selection(individualFitnessRatioValues, selectedIntervals);
-	}
-
-	private List<Double> getIntervals(final Set<Double> fitnessRatioValues) {
-		final List<Double> intervals = new ArrayList<>(fitnessRatioValues);
-		Collections.sort(intervals);
-		return Collections.unmodifiableList(intervals);
-	}
-
-	private double getInterval(final List<Double> intervals, final double randomIntervalValue) {
-		final Iterator<Double> iterator = intervals.iterator();
-
-		while (iterator.hasNext()) {
-			final Double interval = iterator.next();
-
-			if (randomIntervalValue >= interval) {
-				if (iterator.hasNext()) {
-					return iterator.next();
+				} else if (randomInterval >= 0 && randomInterval < intervalStart) {
+					final GACandidate<Long> individual = individualFitnessRatioValues.get(intervalStart);
+					nextGeneration.add(individual);
+					break;
 				}
-
-				return interval;
 			}
 		}
 
-		throw new EmptyIntervalException();
+		return nextGeneration;
 	}
 
-	private void selection(final Multimap<Double, GACandidate<Long>> individualFitnessRatioValues, final List<Double> selectedIntervals) {
-
-
-
+	private double getIntervalMax(final Map<Double, GACandidate<Long>> individualFitnessRatioValues) {
+		final Set<Double> keys = individualFitnessRatioValues.keySet();
+		return Iterables.getLast(keys);
 	}
 
 }

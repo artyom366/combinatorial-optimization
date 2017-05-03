@@ -43,11 +43,14 @@ public class MainControllerImpl implements MainController {
     private final static String START_BUTTON_CAPTION = "Start";
     private final static String CLEAR_BUTTON_CAPTION = "Clear";
 
-    @Autowired
-    private GAStrategy<Long, String, Double> mostDiversePopulationStrategy;
+//    @Autowired
+//    private GAStrategy<Long, String, Double> mostDiversePopulationStrategy;
 
 //    @Autowired
 //    private GAStrategy<Long, String, Double> partialPopulationSelectionStrategy;
+
+    @Autowired
+    private GAStrategy<Long, String, Double> stochasticUniversalSamplingStrategy;
 
     @Autowired
     private GAService<Long, String, Double> gaService;
@@ -78,7 +81,7 @@ public class MainControllerImpl implements MainController {
         startButton.setOnAction(event -> {
 
             final List<GASolution<Long, String, Double>> result = getResult();
-            final GAStatistics statistics = mostDiversePopulationStrategy.getStatistics();
+            final GAStatistics statistics = stochasticUniversalSamplingStrategy.getStatistics();
 
             addDataToChart(lineChart, statistics);
             addDataToResultTable(resultTable, result);
@@ -104,10 +107,10 @@ public class MainControllerImpl implements MainController {
         final Set<Long> geneDictionary = gaService.getGeneDictionary(realPopulation);
         final List<GAPopulation<Long, String, Double>> realPopulationGroups = gaService.getRealPopulationGrouped(realPopulation);
 
-        final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(mostDiversePopulationStrategy);
+        final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(stochasticUniversalSamplingStrategy);
         final Map<String, GASolution<Long, String, Double>> result = gaRunnerService.run(geneDictionary, realPopulationGroups);
 
-        neighboursService.searchForLocationPossibleNeighbours(result, mostDiversePopulationStrategy.getInfo().getNeighboursDistance());
+        neighboursService.searchForLocationPossibleNeighbours(result, stochasticUniversalSamplingStrategy.getInfo().getNeighboursDistance());
 
         return gaService.getResultAsList(result);
     }

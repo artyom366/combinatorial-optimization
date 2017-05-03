@@ -32,6 +32,10 @@ public final class RandomGenerator {
 		return ThreadLocalRandom.current().nextDouble() * max;
 	}
 
+	public static double generateUniformDouble(final double max) {
+		return ThreadLocalRandom.current().nextDouble() * max;
+	}
+
 	public static double generateUniformDouble() {
 		return ThreadLocalRandom.current().nextDouble();
 	}
