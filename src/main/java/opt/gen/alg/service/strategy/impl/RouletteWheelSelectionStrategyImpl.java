@@ -10,8 +10,8 @@ import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GASolution;
 import org.springframework.stereotype.Service;
 
-@Service("stochasticUniversalSamplingStrategy")
-public class StochasticUniversalSamplingStrategyImpl extends MostDiversePopulationStrategyImpl {
+//@Service("rouletteWheelSelectionStrategy")
+public class RouletteWheelSelectionStrategyImpl extends MostDiversePopulationStrategyImpl {
 
 	@Override
 	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration,
@@ -51,7 +51,7 @@ public class StochasticUniversalSamplingStrategyImpl extends MostDiversePopulati
 		final double intervalMax = getIntervalMax(individualFitnessRatioValues);
 		final List<Double> intervals = new ArrayList<>(individualFitnessRatioValues.keySet());
 
-		final List<GACandidate<Long>> nextGeneration = new ArrayList<>();
+		final List<GACandidate<Long>> chosenIndividuals = new ArrayList<>();
 
 		for (int i = 0; i < populationSize; i++) {
 			final double randomInterval = RandomGenerator.generateUniformDouble(intervalMax);
@@ -62,18 +62,18 @@ public class StochasticUniversalSamplingStrategyImpl extends MostDiversePopulati
 
 				if (randomInterval > intervalStart && randomInterval <= intervalEnd) {
 					final GACandidate<Long> individual = individualFitnessRatioValues.get(intervalEnd);
-					nextGeneration.add(individual);
+					chosenIndividuals.add(individual);
 					break;
 
 				} else if (randomInterval >= 0 && randomInterval < intervalStart) {
 					final GACandidate<Long> individual = individualFitnessRatioValues.get(intervalStart);
-					nextGeneration.add(individual);
+					chosenIndividuals.add(individual);
 					break;
 				}
 			}
 		}
 
-		return nextGeneration;
+		return Collections.unmodifiableList(chosenIndividuals);
 	}
 
 	private double getIntervalMax(final Map<Double, GACandidate<Long>> individualFitnessRatioValues) {

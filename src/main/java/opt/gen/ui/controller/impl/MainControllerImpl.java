@@ -49,8 +49,11 @@ public class MainControllerImpl implements MainController {
 //    @Autowired
 //    private GAStrategy<Long, String, Double> partialPopulationSelectionStrategy;
 
+//    @Autowired
+//    private GAStrategy<Long, String, Double> rouletteWheelSelectionStrategy;
+
     @Autowired
-    private GAStrategy<Long, String, Double> stochasticUniversalSamplingStrategy;
+    private GAStrategy<Long, String, Double> tournamentSelectionStrategy;
 
     @Autowired
     private GAService<Long, String, Double> gaService;
@@ -81,7 +84,7 @@ public class MainControllerImpl implements MainController {
         startButton.setOnAction(event -> {
 
             final List<GASolution<Long, String, Double>> result = getResult();
-            final GAStatistics statistics = stochasticUniversalSamplingStrategy.getStatistics();
+            final GAStatistics statistics = tournamentSelectionStrategy.getStatistics();
 
             addDataToChart(lineChart, statistics);
             addDataToResultTable(resultTable, result);
@@ -107,10 +110,10 @@ public class MainControllerImpl implements MainController {
         final Set<Long> geneDictionary = gaService.getGeneDictionary(realPopulation);
         final List<GAPopulation<Long, String, Double>> realPopulationGroups = gaService.getRealPopulationGrouped(realPopulation);
 
-        final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(stochasticUniversalSamplingStrategy);
+        final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(tournamentSelectionStrategy);
         final Map<String, GASolution<Long, String, Double>> result = gaRunnerService.run(geneDictionary, realPopulationGroups);
 
-        neighboursService.searchForLocationPossibleNeighbours(result, stochasticUniversalSamplingStrategy.getInfo().getNeighboursDistance());
+        neighboursService.searchForLocationPossibleNeighbours(result, tournamentSelectionStrategy.getInfo().getNeighboursDistance());
 
         return gaService.getResultAsList(result);
     }
