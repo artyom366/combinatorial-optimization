@@ -89,8 +89,9 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		return strategy.getInfo().getConvergenceRetryThreshold() >= strategy.getStatistics().getCurrentConvergenceRetriesCount();
 	}
 
-	private void estimateFitnessFrequency(final List<GAPopulation<Long, String, Double>> realPopulationGroups, final List<GACandidate<Long>> nextGeneration,
-			final Map<String, GASolution<Long, String, Double>> result) {
+	private void estimateFitnessFrequency(final List<GAPopulation<Long, String, Double>> realPopulationGroups,
+										  final List<GACandidate<Long>> nextGeneration,
+										  final Map<String, GASolution<Long, String, Double>> result) {
 
 		nextGeneration.stream().forEach(candidate -> {
 			if (!result.containsKey(candidate.getHash())) {

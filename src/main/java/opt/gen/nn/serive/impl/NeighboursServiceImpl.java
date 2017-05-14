@@ -20,6 +20,8 @@ import opt.gen.ui.service.PickLocationsService;
 @Service("neighboursService")
 public class NeighboursServiceImpl implements NeighboursService {
 
+	private final static double FITNESS_PERCENTAGE_THRESHOLD = 0.75;
+
 	@Autowired
 	private PickLocationsService pickLocationsService;
 
@@ -27,12 +29,26 @@ public class NeighboursServiceImpl implements NeighboursService {
 	public void searchForLocationPossibleNeighbours(final Map<String, GASolution<Long, String, Double>> results, final double distance) {
 		Validate.notNull(results, "Result locations are not defined");
 
+		final int maxFitnessValue = getMaxFitnessValue(results);
+		final int fitnessThreshold = getMinFitnessValue(maxFitnessValue, FITNESS_PERCENTAGE_THRESHOLD);
+
 		results.entrySet().forEach(entry -> {
 
-			final Set<Long> currentCustomers = entry.getValue().getSolutionCandidate().getGeneSequence();
+			final int fitnessValue = entry.getValue().getRealDataSequenceIds().size();
 
-			searchForLocationPossibleNeighboursInResultEntry(entry, distance, currentCustomers);
+			if (fitnessValue > fitnessThreshold) {
+				final Set<Long> currentCustomers = entry.getValue().getSolutionCandidate().getGeneSequence();
+				searchForLocationPossibleNeighboursInResultEntry(entry, distance, currentCustomers);
+			}
 		});
+	}
+
+	private int getMaxFitnessValue(final Map<String, GASolution<Long, String, Double>> results) {
+		return results.entrySet().stream().map(e -> e.getValue().getRealDataSequenceIds().size()).max(Integer::compare).get();
+	}
+
+	private int getMinFitnessValue(final int results, final double fitnessPercentageThreshold) {
+		return (int) Math.floor(results - (results * fitnessPercentageThreshold));
 	}
 
 	private void searchForLocationPossibleNeighboursInResultEntry(final Map.Entry<String, GASolution<Long, String, Double>> entry, final double distance,
@@ -82,15 +98,15 @@ public class NeighboursServiceImpl implements NeighboursService {
 		return Optional.empty();
 	}
 
-	private boolean distanceIsPresentAndInRange(final Optional<Double> optionalDistance, final double distance) {
-		return optionalDistance.isPresent() && optionalDistance.get() <= distance;
-	}
-
 	private boolean isValidNeighbouringLocation(final Optional<Double> optionalDistance, final double distance, final String currentLocationName,
 												final GADataEntry<Long, String> potentialLocation, final Set<Long> currentCustomers) {
 
 		return distanceIsPresentAndInRange(optionalDistance, distance) && isOptimizationParameterMatch(currentLocationName, potentialLocation,
 																									   currentCustomers);
+	}
+
+	private boolean distanceIsPresentAndInRange(final Optional<Double> optionalDistance, final double distance) {
+		return optionalDistance.isPresent() && optionalDistance.get() <= distance;
 	}
 
 	private boolean isOptimizationParameterMatch(final String currentLocationName, final GADataEntry<Long, String> potentialLocation,

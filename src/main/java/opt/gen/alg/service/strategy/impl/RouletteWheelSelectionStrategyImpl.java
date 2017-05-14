@@ -45,7 +45,6 @@ public class RouletteWheelSelectionStrategyImpl extends MostDiversePopulationStr
 		return result.entrySet().stream().mapToInt(e -> e.getValue().getRealDataSequenceIds().size()).sum();
 	}
 
-
 	private List<GACandidate<Long>> selection(final Map<Double, GACandidate<Long>> individualFitnessRatioValues, final int populationSize) {
 
 		final double intervalMax = getIntervalMax(individualFitnessRatioValues);
