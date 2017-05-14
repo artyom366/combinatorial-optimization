@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 
 public class ButtonFactory {
 
-    public static Button getButton(final float x, final float y, final float height, final float width, final String caption) {
+    public static Button getButton(final double x, final double y, final double height, final double width, final String caption) {
         final Button button = new Button();
         button.setLayoutX(x);
         button.setLayoutY(y);

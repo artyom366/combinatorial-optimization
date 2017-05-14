@@ -21,4 +21,10 @@ public interface GASolution<OPTIMIZATION_TYPE, REAL_DATA_SEQUENCE_ID_TYPE, COORD
 	int getLocationsCount();
 
 	void addToNeighbouringSequenceIds(Pair<Double, Double> coordinates, String newNeighbouringId);
+
+	String getNeighbours();
+
+	int getNeighboursCount();
+
+	int getTotalLocations();
 }

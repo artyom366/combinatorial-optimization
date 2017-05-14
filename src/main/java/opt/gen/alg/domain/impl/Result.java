@@ -65,4 +65,19 @@ public final class Result implements GASolution<Long, String, Double> {
 	public void addToNeighbouringSequenceIds(final Pair<Double, Double> coordinates, final String newNeighbouringId) {
 		this.realDataNeighbouringSequenceIds.put(coordinates, newNeighbouringId);
 	}
+
+	@Override
+	public String getNeighbours() {
+		return realDataNeighbouringSequenceIds.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.joining("-"));
+	}
+
+	@Override
+	public int getNeighboursCount() {
+		return realDataNeighbouringSequenceIds.size();
+	}
+
+	@Override
+	public int getTotalLocations() {
+		return getLocationsCount() +  getNeighboursCount();
+	}
 }

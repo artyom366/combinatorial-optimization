@@ -2,12 +2,17 @@ package opt.gen.ui.controller.impl;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import opt.gen.alg.domain.GADataEntry;
 import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GASolution;
@@ -19,10 +24,8 @@ import opt.gen.alg.service.runner.impl.GARunnerServiceImpl;
 import opt.gen.alg.service.strategy.GAStrategy;
 import opt.gen.nn.serive.NeighboursService;
 import opt.gen.ui.component.ButtonFactory;
-import opt.gen.ui.controller.ChartController;
-import opt.gen.ui.controller.InfoTableController;
-import opt.gen.ui.controller.MainController;
-import opt.gen.ui.controller.ResultTableController;
+import opt.gen.ui.component.TextFieldFactory;
+import opt.gen.ui.controller.*;
 import opt.gen.ui.service.PickLocationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +39,7 @@ import java.util.stream.IntStream;
 @Service
 public class MainControllerImpl implements MainController {
 
-    private final static float WIDTH = 1200f;
+    private final static float WIDTH = 1400f;
     private final static float HEIGHT = 800f;
 
     private final static String CONVERGENCE_SERIES_NAME = "Newly discovered combinations";
@@ -73,6 +76,9 @@ public class MainControllerImpl implements MainController {
     @Autowired
     private ChartController chartController;
 
+    @Autowired
+    private ResultDetailsController resultDetailsController;
+
     @Override
     public Scene buildMainScene() {
 
@@ -88,6 +94,7 @@ public class MainControllerImpl implements MainController {
 
             addDataToChart(lineChart, statistics);
             addDataToResultTable(resultTable, result);
+            setResultTableMouseEvent(resultTable);
             addDataToInfoTable(infoTable, statistics);
         });
 
@@ -145,6 +152,13 @@ public class MainControllerImpl implements MainController {
         final ObservableList<GASolution<Long, String, Double>> tableData = FXCollections.observableList(result);
         clearTableView(resultTable);
         resultTable.setItems(tableData);
+    }
+
+    private void setResultTableMouseEvent(final TableView<GASolution<Long, String, Double>> resultTable) {
+        resultTable.setOnMouseClicked(event -> {
+            final GASolution<Long, String, Double> selectedItem = resultTable.getSelectionModel().getSelectedItem();
+            resultDetailsController.createAndOpenModel(selectedItem);
+        });
     }
 
     private void addDataToInfoTable(final TableView<Info> infoTable, final GAStatistics statistics) {
