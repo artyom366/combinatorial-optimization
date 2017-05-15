@@ -1,56 +1,84 @@
 package opt.gen.ui.controller.impl;
 
 import javafx.scene.Scene;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.ui.component.ButtonFactory;
-import opt.gen.ui.component.TextFieldFactory;
+import opt.gen.ui.component.LabelFactory;
+import opt.gen.ui.component.TextAreaFactory;
+import opt.gen.ui.controller.ChartController;
 import opt.gen.ui.controller.ResultDetailsController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ResultDetailsControllerImpl implements ResultDetailsController {
 
     private final static double WIDTH = 500d;
-    private final static double HEIGHT = 500d;
+    private final static double HEIGHT = 650d;
+
+    private final static String LOCATIONS_DATA = "Locations";
+    private final static String NEIGHBOURS_DATA = "Neighbours";
+
+    @Autowired
+    private ChartController chartController;
 
     @Override
-    public void createAndOpenModel(final GASolution<Long, String, Double> selectedItem) {
+    public void openDetails(final GASolution<Long, String, Double> selectedItem) {
 
-        final Stage addModal = new Stage();
+        final Stage detailsModal = new Stage();
         final Pane root = new Pane();
 
-        final Button closeButton = ButtonFactory.getButton(80d, 220d, 25d, 50d, "Close");
-        closeButton.setOnAction(event -> addModal.close());
+        final Button closeButton = ButtonFactory.getButton(430d, 610d, 25d, 50d, "Close");
+        closeButton.setOnAction(event -> detailsModal.close());
 
         root.getChildren().addAll(closeButton);
 
-        setModalComponents(root);
-        setModalData(selectedItem, root);
+        setModalComponentsAndData(root, selectedItem);
+        setScatterChartAndData(root, selectedItem);
 
         Scene myDialogScene = new Scene(root, WIDTH, HEIGHT);
 
-        addModal.initModality(Modality.APPLICATION_MODAL);
-        addModal.setScene(myDialogScene);
-        addModal.show();
+        detailsModal.setTitle(selectedItem.getHash());
+        detailsModal.initModality(Modality.APPLICATION_MODAL);
+        detailsModal.setScene(myDialogScene);
+        detailsModal.show();
     }
 
-    private void setModalComponents(final Pane root) {
+    private void setModalComponentsAndData(final Pane root, final GASolution<Long, String, Double> selectedItem) {
 
-        final TextField flightNumber = TextFieldFactory.getTextField(250, 20, 300, 25, "FLIGHT NUMBER");
-        final TextField departure = TextFieldFactory.getTextField(280, 20, 300, 25, "DEPARTURE");
-        final TextField departureTime = TextFieldFactory.getTextField(320, 20, 300, 25, "DEPARTURE TIME");
-        final TextField destination = TextFieldFactory.getTextField(360, 20, 300, 25, "DESTINATION");
-        final TextField destinationTime = TextFieldFactory.getTextField(400, 20, 300, 25, "DESTINATION TIME");
-        final TextField status = TextFieldFactory.getTextField(440, 20, 300, 25, "STATUS");
-        final TextField delay = TextFieldFactory.getTextField(480, 20, 300, 25, "DELAY");
-        root.getChildren().addAll(flightNumber, departure, departureTime, destination, destinationTime, status, delay);
+        final Label locationsLabel = LabelFactory.getLabel(LOCATIONS_DATA, 20d, 290d, 100d, 30d);
+        final TextArea locationsText = TextAreaFactory.getTextArea(selectedItem.getLocations(), 20d, 320d, 460d, 120d);
+
+        final Label neighboursLabel = LabelFactory.getLabel(NEIGHBOURS_DATA, 20d, 450d, 100d, 30d);
+        final TextArea neighboursText = TextAreaFactory.getTextArea(selectedItem.getNeighbours(), 20d, 480d, 460d, 120d);
+
+
+        root.getChildren().addAll(locationsLabel, locationsText, neighboursLabel, neighboursText);
     }
 
-    private void setModalData(final GASolution<Long, String, Double> selectedItem, final Pane root) {
+    private void setScatterChartAndData(final Pane root, final GASolution<Long, String, Double> selectedItem) {
+
+        final ScatterChart<Number, Number> xyScatterChart = chartController.getXYScatterChart();
+
+        final XYChart.Series<Number, Number> locationSeries = new XYChart.Series<>();
+        locationSeries.setName(LOCATIONS_DATA);
+        selectedItem.getLocationsCoordinates().forEach(data -> locationSeries.getData().add(new XYChart.Data<>(data.getLeft(), data.getRight())));
+
+        final XYChart.Series<Number, Number> neighboursSeries = new XYChart.Series<>();
+        neighboursSeries.setName(NEIGHBOURS_DATA);
+        selectedItem.getNeighboursCoordinates().forEach(data -> neighboursSeries.getData().add(new XYChart.Data<>(data.getLeft(), data.getRight())));
+
+        xyScatterChart.getData().addAll(locationSeries, neighboursSeries);
+        root.getChildren().add(xyScatterChart);
     }
+
 }

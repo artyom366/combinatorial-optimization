@@ -2,6 +2,7 @@ package opt.gen.ui.controller.impl;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
 import opt.gen.ui.controller.ChartController;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class ChartControllerImpl implements ChartController {
     private final static String CHART_TITLE = "GA Runner";
 
     @Override
-    public LineChart<Number,Number> getXYChart() {
+    public LineChart<Number,Number> getXYLineChart() {
 
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
@@ -35,5 +36,18 @@ public class ChartControllerImpl implements ChartController {
         lineChart.setPrefWidth(WIDTH);
 
         return lineChart;
+    }
+
+    @Override
+    public ScatterChart<Number, Number> getXYScatterChart() {
+        final NumberAxis xAxis = new NumberAxis(0, 200, 50);
+        final NumberAxis yAxis = new NumberAxis(0, 100, 20);
+
+        final ScatterChart<Number, Number> chart = new ScatterChart<>(xAxis, yAxis);
+        chart.setMinHeight(300f);
+        chart.setPrefHeight(200f);
+        chart.setLegendVisible(true);
+
+        return chart;
     }
 }

@@ -1,5 +1,6 @@
 package opt.gen.alg.domain;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,4 +28,8 @@ public interface GASolution<OPTIMIZATION_TYPE, REAL_DATA_SEQUENCE_ID_TYPE, COORD
 	int getNeighboursCount();
 
 	int getTotalLocations();
+
+	List<Pair<Double, Double>> getLocationsCoordinates();
+
+	List<Pair<Double, Double>> getNeighboursCoordinates();
 }

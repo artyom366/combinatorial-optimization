@@ -11,6 +11,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("opt.gen")
 public class Application extends AbstractJavaFxApplicationSupport {
 
+	private final static String APP_TITLE = "GA";
+
 	@Autowired
 	private MainController mainController;
 
@@ -21,6 +23,7 @@ public class Application extends AbstractJavaFxApplicationSupport {
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
 		primaryStage.setScene(mainController.buildMainScene());
+		primaryStage.setTitle(APP_TITLE);
 		primaryStage.show();
 	}
 }

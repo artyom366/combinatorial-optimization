@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -48,7 +49,7 @@ public final class Result implements GASolution<Long, String, Double> {
 
 	@Override
 	public String getLocations() {
-		return realDataSequenceIds.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.joining("-"));
+		return realDataSequenceIds.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.joining(StringUtils.SPACE));
 	}
 
 	@Override
@@ -68,7 +69,7 @@ public final class Result implements GASolution<Long, String, Double> {
 
 	@Override
 	public String getNeighbours() {
-		return realDataNeighbouringSequenceIds.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.joining("-"));
+		return realDataNeighbouringSequenceIds.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.joining(StringUtils.SPACE));
 	}
 
 	@Override
@@ -80,4 +81,16 @@ public final class Result implements GASolution<Long, String, Double> {
 	public int getTotalLocations() {
 		return getLocationsCount() +  getNeighboursCount();
 	}
+
+	@Override
+	public List<Pair<Double, Double>> getLocationsCoordinates() {
+		 return Collections.unmodifiableList(realDataSequenceIds.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
+	}
+
+	@Override
+	public List<Pair<Double, Double>> getNeighboursCoordinates() {
+		 return Collections.unmodifiableList(realDataNeighbouringSequenceIds.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
+	}
+
+
 }
