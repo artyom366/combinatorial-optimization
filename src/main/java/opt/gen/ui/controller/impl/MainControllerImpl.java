@@ -58,7 +58,7 @@ public class MainControllerImpl implements MainController {
 	// private GAStrategy<Long, String, Double> rouletteWheelSelectionStrategy;
 
 	@Autowired
-	private GAStrategy<Long, String, Double> tournamentSelectionStrategy;
+	private GAStrategy<Long, String, Double> gaExecutionStrategy;
 
 	@Autowired
 	private GAService<Long, String, Double> gaService;
@@ -92,7 +92,7 @@ public class MainControllerImpl implements MainController {
 		startButton.setOnAction(event -> {
 
 			final List<GASolution<Long, String, Double>> result = getResult();
-			final GAStatistics statistics = tournamentSelectionStrategy.getStatistics();
+			final GAStatistics statistics = gaExecutionStrategy.getStatistics();
 
 			addDataToChart(lineChart, statistics);
 			addDataToResultTable(resultTable, result);
@@ -119,10 +119,10 @@ public class MainControllerImpl implements MainController {
 		final Set<Long> geneDictionary = gaService.getGeneDictionary(realPopulation);
 		final List<GAPopulation<Long, String, Double>> realPopulationGroups = gaService.getRealPopulationGrouped(realPopulation);
 
-		final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(tournamentSelectionStrategy);
+		final GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(gaExecutionStrategy);
 		final Map<String, GASolution<Long, String, Double>> result = gaRunnerService.run(geneDictionary, realPopulationGroups);
 
-		neighboursService.searchForLocationPossibleNeighbours(result, tournamentSelectionStrategy.getInfo().getNeighboursDistance());
+		neighboursService.searchForLocationPossibleNeighbours(result, gaExecutionStrategy.getInfo().getNeighboursDistance());
 
 		return gaService.getResultAsList(result);
 	}

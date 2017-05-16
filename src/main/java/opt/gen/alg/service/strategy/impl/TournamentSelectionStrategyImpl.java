@@ -14,7 +14,7 @@ import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.generator.RandomGenerator;
 
-@Service("tournamentSelectionStrategy")
+//@Service("gaExecutionStrategy")
 public class TournamentSelectionStrategyImpl extends MostDiversePopulationStrategyImpl {
 
 	@Override

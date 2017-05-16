@@ -17,7 +17,7 @@ public class ChartControllerImpl implements ChartController {
 
     private final static String X_AXIS_LABEL = "Iterations";
     private final static String Y_AXIS_LABEL = "Combinations";
-    private final static String CHART_TITLE = "GA Runner";
+    private final static String CHART_TITLE = "GA Convergence";
 
     @Override
     public LineChart<Number,Number> getXYLineChart() {

@@ -21,7 +21,7 @@ public final class Statistics implements GAStatistics {
 	private long end;
 
 	public Statistics() {
-		this.currentIteration = 0;
+		this.currentIteration = -1;
 		this.convergenceRetries = 0;
 		this.convergences = new LinkedList<>();
 		this.combinations = new LinkedList<>();

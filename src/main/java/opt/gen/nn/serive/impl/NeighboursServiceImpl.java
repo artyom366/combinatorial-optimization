@@ -20,7 +20,7 @@ import opt.gen.ui.service.PickLocationsService;
 @Service("neighboursService")
 public class NeighboursServiceImpl implements NeighboursService {
 
-	private final static double FITNESS_PERCENTAGE_THRESHOLD = 0.75;
+	private final static double FITNESS_PERCENTAGE_THRESHOLD = 0.25;
 
 	@Autowired
 	private PickLocationsService pickLocationsService;
@@ -28,6 +28,8 @@ public class NeighboursServiceImpl implements NeighboursService {
 	@Override
 	public void searchForLocationPossibleNeighbours(final Map<String, GASolution<Long, String, Double>> results, final double distance) {
 		Validate.notNull(results, "Result locations are not defined");
+
+		final long algorithmExecutionStart = getCurrentTimeInMillis();
 
 		final int maxFitnessValue = getMaxFitnessValue(results);
 		final int fitnessThreshold = getMinFitnessValue(maxFitnessValue, FITNESS_PERCENTAGE_THRESHOLD);
@@ -41,6 +43,16 @@ public class NeighboursServiceImpl implements NeighboursService {
 				searchForLocationPossibleNeighboursInResultEntry(entry, distance, currentCustomers);
 			}
 		});
+
+		logNearestNeighboursSearchAlgorithmExecutionTime(algorithmExecutionStart);
+	}
+
+	private long getCurrentTimeInMillis() {
+		return System.currentTimeMillis();
+	}
+
+	private void logNearestNeighboursSearchAlgorithmExecutionTime(long algorithmExecutionStart) {
+		System.out.println(String.format("Nearest neighbours search algorithm execution time is: %d ms", getCurrentTimeInMillis() - algorithmExecutionStart));
 	}
 
 	private int getMaxFitnessValue(final Map<String, GASolution<Long, String, Double>> results) {

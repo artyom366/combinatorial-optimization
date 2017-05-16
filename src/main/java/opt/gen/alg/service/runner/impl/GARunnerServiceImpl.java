@@ -40,8 +40,14 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		final Map<String, GASolution<Long, String, Double>> result = new HashMap<>();
 		run(realPopulationGroups, initialPopulation, geneDictionary, result, result.size());
 
-		final long executionTimeInMillis = strategy.getStatistics().getExecutionTimeInMillis();
+		logGeneticAlgorithmExecutionTime();
+
 		return result;
+	}
+
+	private void logGeneticAlgorithmExecutionTime() {
+		final long executionTimeInMillis = strategy.getStatistics().getExecutionTimeInMillis();
+		System.out.println(String.format("GA execution time is: %d ms", executionTimeInMillis));
 	}
 
 	private void run(final List<GAPopulation<Long, String, Double>> realPopulationGroups, final List<GACandidate<Long>> initialGeneration,

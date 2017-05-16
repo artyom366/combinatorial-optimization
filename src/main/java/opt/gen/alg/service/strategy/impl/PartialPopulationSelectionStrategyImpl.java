@@ -12,7 +12,7 @@ import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.service.strategy.GAStrategy;
 
-//@Service("partialPopulationSelectionStrategy")
+//@Service("gaExecutionStrategy")
 public class PartialPopulationSelectionStrategyImpl extends MostDiversePopulationStrategyImpl {
 
 	//@Override

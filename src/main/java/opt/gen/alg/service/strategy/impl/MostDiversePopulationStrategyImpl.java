@@ -29,7 +29,7 @@ import static opt.gen.alg.generator.RandomGenerator.generateUniformDouble;
 import static opt.gen.alg.generator.RandomGenerator.generateUniformInt;
 import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.*;
 
-//@Service("mostDiversePopulationStrategy")
+//@Service("gaExecutionStrategy")
 public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, String, Double> {
 
 	@Autowired

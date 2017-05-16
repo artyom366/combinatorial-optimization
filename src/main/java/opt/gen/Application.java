@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("opt.gen")
 public class Application extends AbstractJavaFxApplicationSupport {
 
-	private final static String APP_TITLE = "GA";
+	private final static String APP_TITLE = "GA Runner";
 
 	@Autowired
 	private MainController mainController;
