@@ -27,6 +27,7 @@ public class ResultDetailsControllerImpl implements ResultDetailsController {
 
     private final static String LOCATIONS_DATA = "Locations";
     private final static String NEIGHBOURS_DATA = "Neighbours";
+    private final static String COUNT = "Count: ";
 
     @Autowired
     private ChartController chartController;
@@ -47,7 +48,7 @@ public class ResultDetailsControllerImpl implements ResultDetailsController {
 
         Scene myDialogScene = new Scene(root, WIDTH, HEIGHT);
 
-        detailsModal.setTitle(selectedItem.getHash());
+        detailsModal.setTitle(String.format("%s - %d", selectedItem.getHash(), selectedItem.getTotalLocations()));
         detailsModal.initModality(Modality.APPLICATION_MODAL);
         detailsModal.setScene(myDialogScene);
         detailsModal.show();
@@ -55,14 +56,15 @@ public class ResultDetailsControllerImpl implements ResultDetailsController {
 
     private void setModalComponentsAndData(final Pane root, final GASolution<Long, String, Double> selectedItem) {
 
+        final Label locationsCountLabel =  LabelFactory.getLabel(COUNT + selectedItem.getLocationsCount(), 420d, 290d, 100d, 30d);
         final Label locationsLabel = LabelFactory.getLabel(LOCATIONS_DATA, 20d, 290d, 100d, 30d);
         final TextArea locationsText = TextAreaFactory.getTextArea(selectedItem.getLocations(), 20d, 320d, 460d, 120d);
 
+        final Label neighboursCountLabel =  LabelFactory.getLabel(COUNT + selectedItem.getNeighboursCount(), 420d, 450d, 100d, 30d);
         final Label neighboursLabel = LabelFactory.getLabel(NEIGHBOURS_DATA, 20d, 450d, 100d, 30d);
         final TextArea neighboursText = TextAreaFactory.getTextArea(selectedItem.getNeighbours(), 20d, 480d, 460d, 120d);
 
-
-        root.getChildren().addAll(locationsLabel, locationsText, neighboursLabel, neighboursText);
+        root.getChildren().addAll(locationsCountLabel, locationsLabel, locationsText, neighboursCountLabel, neighboursLabel, neighboursText);
     }
 
     private void setScatterChartAndData(final Pane root, final GASolution<Long, String, Double> selectedItem) {
