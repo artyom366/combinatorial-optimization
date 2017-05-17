@@ -1,29 +1,40 @@
-package opt.gen.alg.service;
+package opt.gen;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GADataEntry;
 import opt.gen.alg.domain.GAPopulation;
+import opt.gen.alg.domain.GASolution;
+import opt.gen.alg.domain.impl.Chromosome;
 import opt.gen.alg.domain.impl.PickLocationViewDO;
 import opt.gen.alg.domain.impl.Population;
+import opt.gen.alg.domain.impl.Result;
 import opt.gen.alg.generator.RandomGenerator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class TestDataGenerator {
+
+	private final static String DUMMY_HASH_1 = "1";
+	private final static String DUMMY_HASH_2 = "2";
 
 	public static List<GADataEntry<Long, String>> generateRandomRealGAData(final int dataCount, final int diversity) {
 		return IntStream.range(0, dataCount).boxed().map(location -> new PickLocationViewDO(RandomGenerator.generateUniformLong(diversity)))
 			.collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
 	}
 
-	public static List<GADataEntry<Long, String>> generateRandomRealGAData(final List<Long> genes) {
+	public static List<GADataEntry<Long, String>> generateMultipleRealGADataFromGenes(final List<Long> genes) {
 		return genes.stream().map(PickLocationViewDO::new).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
+	}
+
+	public static GADataEntry<Long, String> generateRealGADataFromGene(final Long gene) {
+		return new PickLocationViewDO(gene);
 	}
 
 	public static Set<Long> generateRandomGeneDictionary(final int size, final int diversity) {
@@ -156,13 +167,13 @@ public class TestDataGenerator {
 		return realData;
 	}
 
-	public static Map<String, List<GADataEntry<Long, String>>> getRealDataAsMap(final List<GADataEntry<Long, String>> realData) {
+	public static Map<String, List<GADataEntry<Long, String>>> generateRealDataAsMap(final List<GADataEntry<Long, String>> realData) {
 		return realData.stream()
 			.collect(Collectors.groupingBy(GADataEntry::getGroupingParameter, Collectors.mapping(e -> e, Collectors.toList())));
 	}
 
-	public static List<GAPopulation<Long, String, Double>> getRealPopulation(final List<GADataEntry<Long, String>> realData) {
-		final Map<String, List<GADataEntry<Long, String>>> realDataAsMap = getRealDataAsMap(realData);
+	public static List<GAPopulation<Long, String, Double>> generateRealPopulation(final List<GADataEntry<Long, String>> realData) {
+		final Map<String, List<GADataEntry<Long, String>>> realDataAsMap = generateRealDataAsMap(realData);
 
 		final List<GAPopulation<Long, String, Double>> realPopulation = new ArrayList<>();
 
@@ -172,6 +183,48 @@ public class TestDataGenerator {
 		});
 
 		return realPopulation;
+	}
+
+	public static Map<String, GASolution<Long, String, Double>> generateDummyGAResults(final Set<Long> genes) {
+
+		final Map<String, GASolution<Long, String, Double>> results = new HashMap<>();
+		final GASolution<Long, String, Double> result1 = generateGASolutionWithDummyCoordinates(genes);
+		final GASolution<Long, String, Double> result2 = generateGAMultipleSolutionsWithDummyCoordinates(genes);
+
+		results.put(DUMMY_HASH_1, result1);
+		results.put(DUMMY_HASH_2, result2);
+		return results;
+	}
+
+	private static GASolution<Long, String, Double> generateGASolutionWithDummyCoordinates(final Set<Long> genes) {
+
+		final GACandidate<Long> candidate = generateGACandidate(genes, DUMMY_HASH_1);
+
+		Pair<Double, Double> dummyCoordinates = new ImmutablePair<>(0d, 0d);
+		final Map<Pair<Double, Double>, String> dummyCoordinatesAndLocation = new HashMap<>();
+		dummyCoordinatesAndLocation.put(dummyCoordinates, StringUtils.EMPTY);
+
+		return new Result(candidate, dummyCoordinatesAndLocation);
+	}
+
+	private static GASolution<Long, String, Double> generateGAMultipleSolutionsWithDummyCoordinates(final Set<Long> genes) {
+
+		final GACandidate<Long> candidate = generateGACandidate(genes, DUMMY_HASH_2);
+
+		final Map<Pair<Double, Double>, String> dummyCoordinatesAndLocation = new HashMap<>();
+		final Pair<Double, Double> dummyCoordinates1 = new ImmutablePair<>(0d, 0d);
+		final Pair<Double, Double> dummyCoordinates2 = new ImmutablePair<>(1d, 1d);
+		final Pair<Double, Double> dummyCoordinates3 = new ImmutablePair<>(2d, 2d);
+
+		dummyCoordinatesAndLocation.put(dummyCoordinates1, StringUtils.EMPTY);
+		dummyCoordinatesAndLocation.put(dummyCoordinates2, StringUtils.EMPTY);
+		dummyCoordinatesAndLocation.put(dummyCoordinates3, StringUtils.EMPTY);
+
+		return new Result(candidate, dummyCoordinatesAndLocation);
+	}
+
+	private static GACandidate<Long> generateGACandidate(final Set<Long> genes, final String hash) {
+		return  new Chromosome(genes, hash);
 	}
 
 

@@ -1,9 +1,8 @@
 package opt.gen.alg.service.runner.impl;
 
-import static opt.gen.alg.service.TestDataGenerator.generateGeneDictionary;
-import static opt.gen.alg.service.TestDataGenerator.generateRealGAData;
-import static opt.gen.alg.service.TestDataGenerator.getRealDataAsMap;
-import static opt.gen.alg.service.TestDataGenerator.getRealPopulation;
+import static opt.gen.TestDataGenerator.generateGeneDictionary;
+import static opt.gen.TestDataGenerator.generateRealGAData;
+import static opt.gen.TestDataGenerator.generateRealPopulation;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,7 +41,7 @@ public class MostDiversePopulationStrategyTest {
 
 		final List<GADataEntry<Long, String>> realData = generateRealGAData();
 		final Set<Long> dictionary = generateGeneDictionary(realData);
-		final List<GAPopulation<Long, String, Double>> realPopulation = getRealPopulation(realData);
+		final List<GAPopulation<Long, String, Double>> realPopulation = generateRealPopulation(realData);
 
 		final Map<String, GASolution<Long, String, Double>> result = gaRunnerService.run(dictionary, realPopulation);
 		assertThat("GA result should not be null", result, is(notNullValue()));

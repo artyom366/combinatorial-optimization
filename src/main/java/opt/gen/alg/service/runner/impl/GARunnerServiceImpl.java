@@ -53,11 +53,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 	private void run(final List<GAPopulation<Long, String, Double>> realPopulationGroups, final List<GACandidate<Long>> initialGeneration,
 			final Set<Long> geneDictionary, final Map<String, GASolution<Long, String, Double>> result, final int diversityDifference) {
 
-		final ForkJoinPool forkJoinPool = new ForkJoinPool(strategy.getInfo().getParallelismLevel());
-		//final ForkJoinTask<?> forkJoinTask = forkJoinPool.submit(() -> {
-			estimateFitnessFrequency(realPopulationGroups, initialGeneration, result);
-		//});
-		//forkJoinTask.join();
+		estimateFitnessFrequency(realPopulationGroups, initialGeneration, result);
 
 		strategy.getStatistics().incrementCurrentIteration();
 		strategy.getStatistics().setNewCombinationsCount(result.size() - diversityDifference);
