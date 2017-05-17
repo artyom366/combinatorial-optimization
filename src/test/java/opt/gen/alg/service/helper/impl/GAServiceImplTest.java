@@ -1,29 +1,22 @@
 package opt.gen.alg.service.helper.impl;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import opt.gen.TestDataGenerator;
-import org.junit.BeforeClass;
+import opt.gen.alg.domain.GADataEntry;
+import opt.gen.alg.domain.GAPopulation;
+import opt.gen.alg.domain.impl.PickLocationViewDO;
+import opt.gen.alg.generator.RandomGenerator;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import opt.gen.alg.domain.GADataEntry;
-import opt.gen.alg.domain.GAPopulation;
-import opt.gen.alg.domain.impl.PickLocationViewDO;
-import opt.gen.alg.generator.RandomGenerator;
+import java.util.*;
+
+import static junit.framework.TestCase.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GAServiceImplTest {
@@ -37,8 +30,8 @@ public class GAServiceImplTest {
 	@Spy
 	private GAServiceImpl gaService;
 
-	@BeforeClass
-	public static void setUpClass() {
+	@Before
+	public void setUpClass() {
 		REAL_DATA = TestDataGenerator.generateMultipleRealGADataFromGenes(new ArrayList<>(Arrays.asList(1L, 2L, 3L, 4L, 5L)));
 		DICTIONARY_MAP = new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L, 5L));
 	}
