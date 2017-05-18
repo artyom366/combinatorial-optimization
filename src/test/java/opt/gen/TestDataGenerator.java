@@ -223,7 +223,7 @@ public class TestDataGenerator {
 		return new Result(candidate, dummyCoordinatesAndLocation);
 	}
 
-	private static GACandidate<Long> generateGACandidate(final Set<Long> genes, final String hash) {
+	public static GACandidate<Long> generateGACandidate(final Set<Long> genes, final String hash) {
 		return  new Chromosome(genes, hash);
 	}
 

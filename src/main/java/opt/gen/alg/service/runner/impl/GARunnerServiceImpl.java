@@ -69,7 +69,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		}
 	}
 
-	private boolean convergenceIsNotReached(final int resultSize, final int diversityDifference) {
+	protected boolean convergenceIsNotReached(final int resultSize, final int diversityDifference) {
 
 		if (convergenceThresholdIsNotReached(resultSize, diversityDifference)) {
 			return true;
@@ -91,7 +91,7 @@ public class GARunnerServiceImpl implements GARunnerService<Long, String, Double
 		return strategy.getInfo().getConvergenceRetryThreshold() >= strategy.getStatistics().getCurrentConvergenceRetriesCount();
 	}
 
-	private void estimateFitnessFrequency(final List<GAPopulation<Long, String, Double>> realPopulationGroups,
+	protected void estimateFitnessFrequency(final List<GAPopulation<Long, String, Double>> realPopulationGroups,
 										  final List<GACandidate<Long>> nextGeneration,
 										  final Map<String, GASolution<Long, String, Double>> result) {
 

@@ -25,7 +25,7 @@ import opt.gen.alg.service.runner.GARunnerService;
 import opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyImpl;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MostDiversePopulationStrategyTest {
+public class GAIntegrationTest {
 
 	@Spy
 	private GAServiceImpl gaService;
