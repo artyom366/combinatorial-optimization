@@ -2,7 +2,7 @@ package opt.gen.alg.service.strategy.impl;
 
 import opt.gen.alg.service.strategy.GAStrategyInfo;
 
-public final class MostDiversePopulationStrategyInfo implements GAStrategyInfo {
+public final class StrategyInfo implements GAStrategyInfo {
 
 	public static final int MIN_CHROMOSOME_SIZE = 2;
 	public static final int MAX_CHROMOSOME_SIZE = 4;

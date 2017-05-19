@@ -6,14 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.springframework.stereotype.Service;
 
 import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GASolution;
-import opt.gen.alg.service.strategy.GAStrategy;
 
 //@Service("gaExecutionStrategy")
-public class PartialPopulationSelectionStrategyImpl extends MostDiversePopulationStrategyImpl {
+public class PartialPopulationSelectionStrategyImpl extends RandomSelectionStrategyImpl {
 
 	//@Override
 	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration, final List<GACandidate<Long>> nextGeneration, final Map<String, GASolution<Long, String, Double>> result) {

@@ -2,7 +2,6 @@ package opt.gen.alg.service.strategy.impl;
 
 import com.google.common.collect.ImmutableSet;
 import opt.gen.alg.domain.GACandidate;
-import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.domain.GAStatistics;
 import opt.gen.alg.domain.impl.Chromosome;
@@ -17,7 +16,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,10 +25,10 @@ import java.util.stream.Stream;
 
 import static opt.gen.alg.generator.RandomGenerator.generateUniformDouble;
 import static opt.gen.alg.generator.RandomGenerator.generateUniformInt;
-import static opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyInfo.*;
+import static opt.gen.alg.service.strategy.impl.StrategyInfo.*;
 
 //@Service("gaExecutionStrategy")
-public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, String, Double> {
+public class RandomSelectionStrategyImpl implements GAStrategy<Long, String, Double> {
 
 	@Autowired
 	private GAService<Long, String, Double> gaService;
@@ -38,8 +36,8 @@ public class MostDiversePopulationStrategyImpl implements GAStrategy<Long, Strin
 	private GAStatistics statistics;
 	private final GAStrategyInfo info;
 
-	public MostDiversePopulationStrategyImpl() {
-		info = new MostDiversePopulationStrategyInfo();
+	public RandomSelectionStrategyImpl() {
+		info = new StrategyInfo();
 	}
 
 	@Override

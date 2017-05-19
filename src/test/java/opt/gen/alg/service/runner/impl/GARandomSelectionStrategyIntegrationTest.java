@@ -22,28 +22,28 @@ import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.service.helper.impl.GAServiceImpl;
 import opt.gen.alg.service.runner.GARunnerService;
-import opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyImpl;
+import opt.gen.alg.service.strategy.impl.RandomSelectionStrategyImpl;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GAIntegrationTest {
+public class GARandomSelectionStrategyIntegrationTest {
 
 	@Spy
 	private GAServiceImpl gaService;
 
 	@InjectMocks
-	private MostDiversePopulationStrategyImpl diversePopulationStrategy = new MostDiversePopulationStrategyImpl();
+	private RandomSelectionStrategyImpl diversePopulationStrategy = new RandomSelectionStrategyImpl();
 
 	@Spy
 	private GARunnerService<Long, String, Double> gaRunnerService = new GARunnerServiceImpl(diversePopulationStrategy);
 
 	@Test
-	public void testRunWithMostDiversePopulationStrategy() throws Exception {
+	public void testRunWithRandomSelectionStrategy() throws Exception {
 
 		final List<GADataEntry<Long, String>> realData = generateRealGAData();
 		final Set<Long> dictionary = generateGeneDictionary(realData);
 		final List<GAPopulation<Long, String, Double>> realPopulation = generateRealPopulation(realData);
 
 		final Map<String, GASolution<Long, String, Double>> result = gaRunnerService.run(dictionary, realPopulation);
-		assertThat("GA result should not be null", result, is(notNullValue()));
+		assertThat("GA with random selection result should not be null", result, is(notNullValue()));
 	}
 }

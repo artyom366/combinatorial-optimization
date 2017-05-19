@@ -8,14 +8,13 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.stereotype.Service;
 
 import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GASolution;
 import opt.gen.alg.generator.RandomGenerator;
 
 //@Service("gaExecutionStrategy")
-public class TournamentSelectionStrategyImpl extends MostDiversePopulationStrategyImpl {
+public class TournamentSelectionStrategyImpl extends RandomSelectionStrategyImpl {
 
 	@Override
 	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration, final Map<String, GASolution<Long, String, Double>> result) {

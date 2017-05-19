@@ -4,7 +4,7 @@ import opt.gen.alg.domain.GACandidate;
 import opt.gen.alg.domain.GADataEntry;
 import opt.gen.alg.domain.GAPopulation;
 import opt.gen.alg.domain.GASolution;
-import opt.gen.alg.service.strategy.impl.MostDiversePopulationStrategyImpl;
+import opt.gen.alg.service.strategy.impl.RandomSelectionStrategyImpl;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class GARunnerServiceImplTest {
     private static Map<String, GASolution<Long, String, Double>> RESULT;
 
     @InjectMocks
-    private MostDiversePopulationStrategyImpl diversePopulationStrategy = new MostDiversePopulationStrategyImpl();
+    private RandomSelectionStrategyImpl diversePopulationStrategy = new RandomSelectionStrategyImpl();
 
     @Spy
     private GARunnerServiceImpl gaRunnerService = new GARunnerServiceImpl(diversePopulationStrategy);

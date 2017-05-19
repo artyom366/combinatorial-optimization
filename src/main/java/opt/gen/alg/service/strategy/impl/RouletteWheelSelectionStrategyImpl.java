@@ -11,7 +11,7 @@ import opt.gen.alg.domain.GASolution;
 import org.springframework.stereotype.Service;
 
 @Service("gaExecutionStrategy")
-public class RouletteWheelSelectionStrategyImpl extends MostDiversePopulationStrategyImpl {
+public class RouletteWheelSelectionStrategyImpl extends RandomSelectionStrategyImpl {
 
 	@Override
 	public List<GACandidate<Long>> selection(final List<GACandidate<Long>> initialGeneration,
